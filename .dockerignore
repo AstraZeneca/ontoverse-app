@@ -1,0 +1,16 @@
+node_modules
+.next
+.git
+.gitignore
+.env*.local
+.env
+README.md
+MIGRATION_SUMMARY.md
+backend/
+frontend/
+dist/
+build/
+coverage/
+*.log
+.DS_Store
+

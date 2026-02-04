@@ -1,6 +1,17 @@
 ![alt text](image.png)
-![Maturity level-0](https://img.shields.io/badge/Maturity%20Level-ML--0-red)
 
+![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)
+![Maturity level-0](https://img.shields.io/badge/Maturity%20Level-ML--0-red)
+[![arXiv](https://img.shields.io/badge/arXiv-2408.03339-b31b1b.svg)](https://arxiv.org/abs/2408.03339)
+
+![Next.js](https://img.shields.io/badge/Next.js-14-black?logo=next.js)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?logo=typescript)
+![React](https://img.shields.io/badge/React-18.2-61DAFB?logo=react)
+![Node.js](https://img.shields.io/badge/Node.js-18+-339933?logo=node.js)
+![Neo4j](https://img.shields.io/badge/Neo4j-4.0+-008CC1?logo=neo4j)
+![Material-UI](https://img.shields.io/badge/Material--UI-5-007FFF?logo=mui)
+![D3.js](https://img.shields.io/badge/D3.js-7-F9A03C?logo=d3.js)
+![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker)
 
 Ontoverse is a prototype application for exploring and visualizing scientific papers and their relationships through an interactive graph interface. The application provides a unified platform for navigating research papers, topics, and their connections using a Neo4j graph database.
 
