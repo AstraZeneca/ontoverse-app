@@ -1,0 +1,4 @@
+// Runtime environment configuration injected by Docker
+window._env_ = {
+  CONFIG_ID: "${CONFIG_ID}"
+};
