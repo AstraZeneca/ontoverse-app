@@ -13,7 +13,8 @@
 ![D3.js](https://img.shields.io/badge/D3.js-7-F9A03C?logo=d3.js)
 ![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker)
 
-Ontoverse is a prototype application for exploring and visualizing scientific papers and their relationships through an interactive graph interface. The application provides a unified platform for navigating research papers, topics, and their connections using a Neo4j graph database.
+
+The Ontoverse is an application for discovering and exploring complex domain knowledge through an interactive map interface. It provides a unified platform for navigating research papers, topics, and their connections using a Neo4j graph database.
 
 ## Description
 
