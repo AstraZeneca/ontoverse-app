@@ -1,7 +1,6 @@
 ![alt text](image.png)
 ![Maturity level-0](https://img.shields.io/badge/Maturity%20Level-ML--0-red)
 
-# Ontoverse
 
 Ontoverse is a prototype application for exploring and visualizing scientific papers and their relationships through an interactive graph interface. The application provides a unified platform for navigating research papers, topics, and their connections using a Neo4j graph database.
 
