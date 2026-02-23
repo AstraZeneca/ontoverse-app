@@ -14,7 +14,8 @@
 ![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker)
 
 
-The Ontoverse is an application for discovering and exploring complex domain knowledge through an interactive map interface. It provides a unified platform for navigating research papers, topics, and their connections using a Neo4j graph database.
+**Ontoverse** is a knowledge management platform designed to visualize and explore scientific literature in an intuitive, cartographic manner. The system transforms bibliographic collections into interactive network visualizations where papers are connected based on conceptual similarity and topic occupancy, enabling researchers to discover relationships, identify research trends, and navigate related work within their domain.
+The Ontoverse consists of the ontoverse-kg-choreographer, a knowledge graph generation pipeline which transforms bibliographic data into a rich, queryable knowledge graph architecture, and the ontoverse-app which enables the cartographic visualization. 
 
 ## Description
 
@@ -158,3 +159,17 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduc
 ## Authors
 
 See [AUTHORS.md](AUTHORS.md) for the list of authors and maintainers.
+
+
+## Citation
+
+If you use the Ontoverse, please cite
+@misc{zimmermann2024ontoversedemocratisingaccessknowledge,
+      title={The Ontoverse: Democratising Access to Knowledge Graph-based Data Through a Cartographic Interface}, 
+      author={Johannes Zimmermann and Dariusz Wiktorek and Thomas Meusburger and Miquel Monge-Dalmau and Antonio Fabregat and Alexander Jarasch and Günter Schmidt and Jorge S. Reis-Filho and T. Ian Simpson},
+      year={2024},
+      eprint={2408.03339},
+      archivePrefix={arXiv},
+      primaryClass={cs.HC},
+      url={https://arxiv.org/abs/2408.03339}, 
+}
