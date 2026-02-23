@@ -1,5 +1,4 @@
-![alt text](image.png)
-
+![Ontoverse Logo](./public/ontoverse_logo.svg)
 ![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)
 ![Maturity level-0](https://img.shields.io/badge/Maturity%20Level-ML--0-red)
 [![arXiv](https://img.shields.io/badge/arXiv-2408.03339-b31b1b.svg)](https://arxiv.org/abs/2408.03339)
