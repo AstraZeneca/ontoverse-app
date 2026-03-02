@@ -18,13 +18,14 @@ The Ontoverse consists of the ontoverse-kg-choreographer, a knowledge graph gene
 
 ## Description
 
-Ontoverse is a Next.js-based web application that combines frontend and backend functionality into a single unified framework. It allows users to:
+The purpose of Ontoverse is:
 
-- Explore scientific papers and their relationships
-- Navigate topic hierarchies through interactive graph visualizations
-- Filter and search papers by various criteria
-- View detailed information about papers and topics
+- **Visual Literature Exploration**: Transform large collections of scientific papers into navigable knowledge graphs where conceptual relationships are visually apparent
+- **Concept-Based Discovery**: Connect papers through shared biomedical concepts (entities like diseases, genes, proteins, drugs) rather than simple keyword matching
+- **Research Landscape Mapping**: Reveal the structure and topology of research domains, showing how different topics and papers relate to one another
+- **Enhanced Literature Review**: Enable researchers to quickly identify related work, find papers on similar topics, and understand the conceptual landscape of their field
 
+The Ontoverse app is a Next.js-based web application that combines frontend and backend functionality into a single unified framework.
 The application uses D3.js for graph visualization and Material-UI for the user interface, providing an intuitive way to explore complex research relationships.
 
 ## Software Requirements
