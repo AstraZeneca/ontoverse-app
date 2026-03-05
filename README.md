@@ -162,14 +162,14 @@ See [AUTHORS.md](AUTHORS.md) for the list of authors and maintainers.
 
 
 ## Citation
-
+ 
 If you use the Ontoverse, please cite
-@misc{zimmermann2024ontoversedemocratisingaccessknowledge,
-      title={The Ontoverse: Democratising Access to Knowledge Graph-based Data Through a Cartographic Interface}, 
-      author={Johannes Zimmermann and Dariusz Wiktorek and Thomas Meusburger and Miquel Monge-Dalmau and Antonio Fabregat and Alexander Jarasch and Günter Schmidt and Jorge S. Reis-Filho and T. Ian Simpson},
-      year={2024},
-      eprint={2408.03339},
-      archivePrefix={arXiv},
-      primaryClass={cs.HC},
-      url={https://arxiv.org/abs/2408.03339}, 
-}
+ 
+**The Ontoverse: Democratising Access to Knowledge Graph-based Data Through a Cartographic Interface**  
+
+Johannes Zimmermann, Dariusz Wiktorek, Thomas Meusburger, Miquel Monge-Dalmau, Antonio Fabregat, Alexander Jarasch, Günter Schmidt, Jorge S. Reis-Filho, T. Ian Simpson  
+
+*arXiv preprint arXiv:2408.03339* (2024)  
+
+[[arXiv]](https://arxiv.org/abs/2408.03339) [[PDF]](https://arxiv.org/pdf/2408.03339)
+ 
