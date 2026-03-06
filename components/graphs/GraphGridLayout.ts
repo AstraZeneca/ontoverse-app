@@ -105,8 +105,7 @@ export const initGraph = (
     .attr("height", viewportHeight)
     .attr("viewBox", [0, 0, viewportWidth, viewportHeight])
     .attr("preserveAspectRatio", "xMinYMin meet")
-    // .style('background', '#a2c8d7');//#115c79
-    .style("background", "#115c79");
+    .style("background", "rgb(0,56,101)");
 
   useSvgElemsStore.setState({ svg });
 

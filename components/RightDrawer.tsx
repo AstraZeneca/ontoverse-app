@@ -102,16 +102,16 @@ export default function RightDrawer() {
         <Toolbar>
           <Logo />
           <Typography variant="h6" noWrap sx={{ flexGrow: 1 }} component="div">
-            Ontoverse
+            
           </Typography>
 
-          <IconButton
+          {/* <IconButton
             color="inherit"
             aria-label="open chat assistant"
             onClick={handleChatAssistantOpen}
           >
             <SmartToy />
-          </IconButton>
+          </IconButton> */}
           <IconButton
             color="inherit"
             aria-label="select mode"

@@ -10,6 +10,7 @@ interface AppTopBarProps extends AppBarProps {
 const AppTopBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== 'open',
 })<AppTopBarProps>(({ theme, open }) => ({
+  backgroundColor: '#121212',
   transition: theme.transitions.create(['margin', 'width'], {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,

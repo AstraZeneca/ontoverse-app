@@ -2,19 +2,19 @@ import styled from "@emotion/styled";
 
 
 const ImgContainer = styled.div`
-  background: white;
+  // background: white;
   padding: 4px;
   margin-right: 8px;
   display: flex;
-  border-radius: 8px 8px 0px 8px;
+  // border-radius: 8px 8px 0px 8px;
 `;
 
 const Logo = () => {
   return (
-      <ImgContainer >
+      <ImgContainer>
         <img style={{height:'30px'}}
-          src='OncoAIMapLogo.png'
-          alt='OncoAIMap Logo'
+          src='ONTOVERSE.svg'
+          alt='Ontoverse Logo'
         />
       </ImgContainer>
   )
