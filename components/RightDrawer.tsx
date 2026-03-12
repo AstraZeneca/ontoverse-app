@@ -10,40 +10,19 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import GraphContainer from "./graphs/GraphContainer";
 import ZoomSlider from "./ZoomSlider";
-import { More, DoneAll, Check, SmartToy } from "@mui/icons-material";
+import { More, DoneAll, Check } from "@mui/icons-material";
 import SettingsApplicationsIcon from "@mui/icons-material/SettingsApplications";
-import GroupingNodeDetailsPanel from "./NodeDetailsPanels/GroupingNodeDetailsPanel";
-import PaperDetailsPanel from "./NodeDetailsPanels/PaperDetailsPanel";
 import AppTopBar from "./layout/AppTopBar";
 import MainContainer from "./layout/MainContainer";
 import DrawerHeader, { DRAWER_WIDTH } from "./layout/DrawerHeader";
-import FilterPanel from "./filter/FilterPanel";
 import Logo from "./Logo";
 import ChatAssistant from "./ChatAssistant";
-import { Badge, Chip, Modal, Tooltip } from "@mui/material";
-import {
-  BranchNodeByD3,
-  PaperNodeType,
-  TopicNodeType,
-} from "@/model/GraphDataModel";
+import { Modal } from "@mui/material";
+import { PaperNodeType } from "@/model/GraphDataModel";
 import { useEffect, useState, Suspense } from "react";
 import { useSelection } from "@/lib/state/SelectionProvider";
 import { useSelectStore } from "@/model/store/useSelection";
-import { getCloneTopicTreePath } from "@/lib/utils/treeUtils";
-import { CloneChipsToggle } from "./cloneChipsToggle/CloneChipsToggle";
 import DraggablePanels from "./DraggablePanels";
-
-const modalBoxStyle = {
-  // position: 'absolute' as 'absolute',
-  // top: '50%',
-  // left: '50%',
-  // transform: 'translate(-50%, -50%)',
-  // width: 400,
-  // bgcolor: 'background.paper',
-  // border: '2px solid #000',
-  // boxShadow: 24,
-  // p: 4,
-};
 
 export default function RightDrawer() {
   const theme = useTheme();
@@ -51,9 +30,8 @@ export default function RightDrawer() {
   const [settingsPanelOpen, setSettingsPanelOpen] = useState(false);
   const [chatAssistantOpen, setChatAssistantOpen] = useState(false);
   // const [zoomLevel, setZoomLevel] = useState(GRAPH_CONFIG.defaultZoom);
-  const { state: nodesSelection, dispatch } = useSelection();
-  const { lastSelectedNodeData, clonesSelection, itemsSelectionIds } =
-    nodesSelection;
+  const { state: nodesSelection } = useSelection();
+  const { lastSelectedNodeData, clonesSelection } = nodesSelection;
   const multiSelect = useSelectStore((state) => state.multiSelect);
 
   // console.log('RightDrawer >  nodeSelection:',{lastSelectedNodeData, itemsSelectionIds});
@@ -71,10 +49,6 @@ export default function RightDrawer() {
 
   const handleSettingsPanelClose = () => {
     setSettingsPanelOpen(false);
-  };
-
-  const handleChatAssistantOpen = () => {
-    setChatAssistantOpen(true);
   };
 
   const handleChatAssistantClose = () => {
