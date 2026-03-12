@@ -1,5 +1,8 @@
 #!/bin/bash
 
+
+# Allow DB_PASSWORD to be passed as a parameter, default to 'testtest' if not provided
+DB_PASSWORD="${1:-testtest}"
 IMAGE_NAME="odsp-ontoverse:latest"
 CONTAINER_NAME="ontoverse-test"
 
@@ -19,7 +22,7 @@ if [ $? -eq 0 ]; then
         -e DB_HOST=host.docker.internal \
         -e DB_PORT=7687 \
         -e DB_USERNAME=neo4j \
-        -e DB_PASSWORD=testtest \
+        -e DB_PASSWORD="$DB_PASSWORD" \
         -e DB_DATABASE=neo4j \
         -e CONFIG_ID=SMALL \
         --name $CONTAINER_NAME $IMAGE_NAME
