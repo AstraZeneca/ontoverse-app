@@ -17,7 +17,7 @@
     "@mui/styled-engine-sc": "^5.8.0",
     "compression": "^1.7.4",
     "d3": "^7.6.1",
-    "next": "^14.0.0",
+    "next": "^15.5.14",
     "neo4j-driver": "^5.8.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
