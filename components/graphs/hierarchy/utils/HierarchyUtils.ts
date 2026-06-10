@@ -50,7 +50,7 @@ export function getLabelFontWeigh(graphLevel:number) {//400)
 };
 
 export function getLabelStrokeColor(graphLevel:number) {
-  if (graphLevel <= 0) {//it's paper
+  if (graphLevel <= 0) {// leaf item node
     return 'none';
   }
 
@@ -69,10 +69,6 @@ export const getLabelStrokeWidth = (graphLevel:number, graphMaxLevel:number, zoo
 };
 
 export function getLabelDisplayValue(graphLevel:number, graphMaxLevel:number, zoomLevel:number) {
-  // const minZoom = paperNode ? GRAPH_CONFIG.showItemNodeLabelAtZoomLevel.min : GRAPH_CONFIG.showGroupingNodeLabelAtZoomLevel.min;
-  // const maxZoom = paperNode ? GRAPH_CONFIG.showItemNodeLabelAtZoomLevel.max : GRAPH_CONFIG.showGroupingNodeLabelAtZoomLevel.max;
-
-  // return (zoomLevel >= minZoom && zoomLevel <= maxZoom ) ? 'unset' : 'none';
   const { min, max }:{ min:number, max:number } = (graphLevel <= 0)
     ? GRAPH_CONFIG.showItemNodeLabelAtZoomLevel
     : GRAPH_CONFIG.collectionZoom[graphMaxLevel][graphLevel] as { min:number, max:number };

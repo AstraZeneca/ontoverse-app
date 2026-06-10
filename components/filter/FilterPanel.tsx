@@ -77,9 +77,6 @@ const FilterPanel = () => {
       (state) => state.collectionNodes
   );
   const allClones = useRichDataStore((state) => state.cloneNodes);
-  // const topicNodes:TopicNodeType[] = !data?.topicNodes ? [] as TopicNodeType[] : data?.topicNodes as TopicNodeType[];
-  // const allPapers:BranchNodeByD3[] = !richData?.paperNodes ? [] : richData.paperNodes;
-  // const allClones:BranchNodeByD3[] = useMemo( () => !richData?.nodes ? [] :  richData.nodes.filter( n => n.data.typeNumber > 1 ), [richData?.nodes]);
 
   const sortedItems: AppBranchNode[] = useMemo(() => {
     const items = showSelectedOnly
@@ -92,15 +89,12 @@ const FilterPanel = () => {
     return getSortedItems(items, sortOption) as AppBranchNode[];
   }, [allItems, sortOption, showSelectedOnly, nodesSelection.clonesSelection]);
 
-  // console.log( 'FilterPanel >> sortedPapers', sortedPapers )
-
   const filteredAndSortedItems: AppBranchNode[] = useMemo(() => {
     try {
       return getFilteredItems(sortedItems, searchQuery) as AppBranchNode[];
     } catch (error) {
       console.error("Error in getFilteredItems:", error);
-      // alert("Error while fitering papers. Possibly due to data inconsistancy. \nCheck the console for the error details.");
-      return []; // Return a fallback value to prevent crashes
+      return [];
     }
   }, [sortedItems, searchQuery]);
 
@@ -118,9 +112,6 @@ const FilterPanel = () => {
 
     setSortOption(sortOption);
   };
-  // console.log('searchQuery',searchQuery,'filteredAndSortedItems',filteredAndSortedItems, {allPapers});
-  // console.log('FilterPanel >>>>>>>>> nodesSelection',nodesSelection);
-  // console.log("FilterPanel ------->> filteredTopicNodes", filteredTopicNodes);
 
   const handleExportClick = () => {
     const { itemsSelectionIds } = nodesSelection;
@@ -143,7 +134,6 @@ const FilterPanel = () => {
 
   const handleItemClick = (itemNodeData: AppBranchNode) => {
     const clones = findCloneNodes(itemNodeData, allClones);
-    // console.log('handlePaperItemClick > newNodeSelection', {clones, targetNode:paperNodeData});
     if (!multiSelect) {
       dispatch({
         type: SelectionActions.CLEAR_SELECTION, //Temporarily switched off multi selection
@@ -296,11 +286,6 @@ const FilterPanel = () => {
                           (nodesSelection.lastSelectedNodeData?.data.props as AppItemProps | undefined)?.itemID ===
                           itemNodeId
                       }
-                      // key={paper.data.props.itemID.low}
-                      // paperNode={paper}
-                      // selected={nodesSelection.itemsSelectionIds.includes(
-                      //     paper.data.props.itemID.low
-                      // )}
                       onItemClick={handleItemClick}
                   />
               )}}

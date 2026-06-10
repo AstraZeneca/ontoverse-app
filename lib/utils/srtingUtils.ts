@@ -107,8 +107,8 @@ export const exportItemsToCSV = (items: GraphNodeType<unknown>[], filename:strin
 
   for(var i = 0; i < items.length; i++){
       const year = items[i].year;
-      const paperProps = { ...(items[i].props as Record<string, unknown>), year};
-      const row = COLUMNS_SCHEMA.map((colSchema) => colSchema.accessor(paperProps as Parameters<typeof colSchema.accessor>[0]))
+      const itemProps = { ...(items[i].props as Record<string, unknown>), year};
+      const row = COLUMNS_SCHEMA.map((colSchema) => colSchema.accessor(itemProps as Parameters<typeof colSchema.accessor>[0]))
 
       csvRows.push(row.join(','));
   }

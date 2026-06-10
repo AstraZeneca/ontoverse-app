@@ -164,30 +164,6 @@ export default function RightDrawer() {
           }
           clonesSelection={clonesSelection as AppBranchNode[] | undefined}
         />
-        {
-          //show details panel here dep. on node type
-          // <Box sx={{ overflow: "auto" }}>
-          //   {
-          //     // console.log("RightDrawer => lastSelectedNodeData",lastSelectedNodeData)
-          //   }
-          //   {lastSelectedNodeData &&
-          //   lastSelectedNodeData.data?.id > 0 &&
-          //   lastSelectedNodeData.data?.grouping ? (
-          //     <GroupingNodeDetailsPanel
-          //       d={lastSelectedNodeData.data as TopicNodeType}
-          //     />
-          //   ) : null}
-          //   {lastSelectedNodeData &&
-          //   lastSelectedNodeData.data?.id > 0 &&
-          //   !lastSelectedNodeData.data?.grouping ? (
-          //     <PaperDetailsPanel
-          //       d={lastSelectedNodeData.data as PaperNodeType}
-          //     />
-          //   ) : null}
-
-          //   <CloneChipsToggle clonesSelection={clonesSelection as AppBranchNode[] | undefined} />
-          // </Box>
-        }
       </Drawer>
       <Modal
         open={settingsPanelOpen}

@@ -2,80 +2,37 @@
 
 This document lists files in the codebase that appear to be unused or not referenced.
 
-## Definitely Unused Files
+Last updated after the Paper → Item refactor (June 2026).
 
-### Components
-1. **`components/NodeDetailsPanels/MockNodePanel.tsx`**
-   - Not imported anywhere in the codebase
-   - Appears to be a mock/test component with placeholder content
+## Removed in Recent Cleanup
 
-2. **`components/NodeDetailsPanels/GroupingNodeDetailsPanel.tsx`**
-   - Imported in `components/RightDrawer.tsx` but only used in commented-out code (lines 201-203)
-   - The component itself is functional but not actively used
+These files were deleted because they had zero code references:
 
-3. **`components/icons/ListIcon.tsx`**
-   - Not imported anywhere
-   - Simple SVG icon component
+- `lib/items/model/_res.json` — orphaned Neo4j response dump (~72k lines)
+- `model/__mock__/newDB.json` — orphaned mock data
+- `REFACTORING_SUMMARY.md` — superseded by this doc and `TYPE_ORGANIZATION.md`
 
-4. **`components/icons/l.svg`**
-   - Not referenced anywhere
+## Previously Listed — No Longer Present
 
-### Model/Data Files
-5. **`lib/papers/model/RecordExamples.ts`**
-   - Not imported anywhere
-   - Contains example data structures (NodePaper, NodeCollection, Relationship)
-   - Appears to be documentation/example code
+The following were listed in earlier audits but have already been removed from the repo:
 
-6. **`lib/papers/model/ForceDirectedPositioning.ts`**
-   - Not imported anywhere
-   - Contains force-directed graph positioning logic (alternative to hierarchy positioning)
-   - Currently unused in favor of HierarchyPositioning
+- `components/NodeDetailsPanels/MockNodePanel.tsx`
+- `components/NodeDetailsPanels/GroupingNodeDetailsPanel.tsx`
+- `components/icons/ListIcon.tsx`, `components/icons/l.svg`
+- `lib/papers/model/RecordExamples.ts`
+- `lib/papers/model/ForceDirectedPositioning.ts`
+- `lib/papers/model/contourLines.ts`
+- `lib/papers/model/FetchedDataModel.ts`, `model/FetchedDataModel.ts`
+- `public/index.html`
 
-7. **`lib/papers/model/contourLines.ts`**
-   - Not imported anywhere
-   - There's a different contourLines implementation in `components/graphs/contourLines/contourLines.ts` which is actually used
-   - This appears to be an old/unused version
+## Currently Used (lib/items)
 
-8. **`lib/papers/model/FetchedDataModel.ts`** ⚠️ **ACTUALLY USED**
-   - **IMPORTED BY:** `lib/papers/model/dataAdapter.ts`, `lib/papers/model/GraphDataModel.ts`
-   - Exports `LowHigh` type and other data model types
-   - **Note:** Nearly identical to `model/FetchedDataModel.ts` (only difference: `authors` type)
-
-9. **`model/FetchedDataModel.ts`** ⚠️ **ACTUALLY USED**
-   - **IMPORTED BY:** `model/GraphDataModel.ts`
-   - Exports `LowHigh` type and other data model types
-   - **Note:** Nearly identical to `lib/papers/model/FetchedDataModel.ts` (only difference: `authors` type)
-   - **Recommendation:** These two files could potentially be consolidated into one, but both are currently used
-
-### Static Files
-10. **`public/index.html`**
-    - Not used by Next.js (Next.js generates HTML automatically)
-    - This appears to be a leftover from a React app migration
-    - Contains references to `%PUBLIC_URL%` which is Create React App syntax
-
-## Files That May Be Used Indirectly
-
-These files might be used but are harder to detect:
-
-- **`lib/papers/model/stringUtils.ts`** - Used in `dataAdapter.ts`
-- **`lib/utils/srtingUtils.ts`** - Used in multiple components (note: typo in filename "srting" instead of "string")
-- **`model/Stats.ts`** - Used in `GraphGridLayout.ts`
-- **`lib/papers/model/Stats.ts`** - Used in API route and other model files
+- `lib/items/model/stringUtils.ts` — used in `dataAdapter.ts`
+- `lib/items/model/Stats.ts` — used in API route and graph layout
+- `lib/utils/srtingUtils.ts` — used in filter/export (note: typo in filename)
+- `model/Stats.ts` — used in `GraphGridLayout.ts`
 
 ## Recommendations
 
-1. **Safe to Remove:**
-   - MockNodePanel.tsx
-   - RecordExamples.ts
-   - lib/papers/model/contourLines.ts (duplicate)
-   - ListIcon.tsx
-   - components/icons/l.svg
-   - public/index.html
-
-2. **Review Before Removing:**
-   - GroupingNodeDetailsPanel.tsx (might be needed for future features)
-   - ForceDirectedPositioning.ts (might be an alternative algorithm to keep)
-
-3. **Consider Fixing:**
-   - `lib/utils/srtingUtils.ts` - Typo in filename (should be "stringUtils.ts")
-
+1. **Consider fixing**: `lib/utils/srtingUtils.ts` — rename to `stringUtils.ts` (requires updating imports).
+2. **Keep an eye on**: commented-out code in components — prefer deletion over accumulation.

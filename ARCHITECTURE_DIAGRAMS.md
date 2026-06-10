@@ -27,7 +27,7 @@ graph TB
     end
     
     subgraph "Next.js Server"
-        E[API Routes<br/>/api/papers]
+        E[API Routes<br/>/api/items]
         F[Server-Side Rendering]
     end
     
@@ -47,7 +47,7 @@ graph TB
     style G fill:#FF9800
 ```
 
-**Description**: Ontoverse is a full-stack Next.js application that combines frontend and backend functionality. The client uses React with TypeScript for UI, D3.js for graph visualization, Material-UI for design components, and Zustand for state management. The backend API routes communicate with a Neo4j graph database to fetch and process paper relationships.
+**Description**: Ontoverse is a full-stack Next.js application that combines frontend and backend functionality. The client uses React with TypeScript for UI, D3.js for graph visualization, Material-UI for design components, and Zustand for state management. The backend API routes communicate with a Neo4j graph database to fetch and process item and collection relationships.
 
 ---
 
@@ -69,7 +69,7 @@ graph LR
     end
     
     subgraph "Data Access Layer"
-        C1[API Routes<br/>/api/papers]
+        C1[API Routes<br/>/api/items]
         C2[Neo4j Driver]
         C3[Cypher Queries]
     end
@@ -134,11 +134,10 @@ graph TD
     K --> K1[SearchField]
     K --> K2[SortDropdown]
     K --> K3[FilterIndicator]
-    K --> K4[PaperItem List<br/>Virtuoso]
+    K --> K4[ItemListRow List<br/>Virtuoso]
     
     E --> L[Drawer<br/>Node Details]
-    L --> M1[PaperDetailsPanel]
-    L --> M2[GroupingNodeDetailsPanel]
+    L --> M1[ItemDetailsPanel]
     
     style A fill:#FF6B6B
     style E fill:#4ECDC4
@@ -164,7 +163,7 @@ sequenceDiagram
     
     User->>UI: Open Application
     UI->>Context: Request Initial Data
-    Context->>API: GET /api/papers
+    Context->>API: GET /api/items
     API->>Neo4j: Execute Cypher Query
     Neo4j-->>API: Raw Graph Records
     API->>API: Transform Data<br/>(dataAdapter)
@@ -181,7 +180,7 @@ sequenceDiagram
     UI->>UI: Show Node Details Panel
     D3-->>User: Updated Visualization
     
-    User->>UI: Filter/Search Papers
+    User->>UI: Filter/Search Items
     UI->>UI: Apply Client-Side Filters
     UI->>D3: Update Visible Nodes
     D3-->>User: Filtered Graph View
@@ -257,8 +256,8 @@ graph TB
 ```mermaid
 graph TB
     subgraph "Neo4j Database"
-        A[Papers<br/>Node]
-        B[Topics<br/>Node]
+        A[Items<br/>Paper label in Neo4j]
+        B[Collections<br/>Node]
         C[Keywords<br/>Node]
         D[CITES<br/>Relationship]
         E[BELONGS_TO<br/>Relationship]
@@ -282,8 +281,8 @@ graph TB
     I --> H
     
     subgraph "Data Models"
-        J[PaperNodeType]
-        K[EdgeType]
+        J[GraphNodeType]
+        K[EdgeFromServer]
         L[TreeNode]
         M[GraphData]
     end
@@ -302,7 +301,7 @@ graph TB
     style M fill:#9575CD
 ```
 
-**Description**: The application connects to Neo4j using the official driver. Cypher queries fetch papers, topics, and relationships. Data is transformed from Neo4j's format into TypeScript models (PaperNodeType, EdgeType, TreeNode) and aggregated into a GraphData structure.
+**Description**: The application connects to Neo4j using the official driver. Cypher queries fetch items (Paper label), collections, and relationships. Data is transformed from Neo4j's format into generic TypeScript models (`GraphNodeType`, `EdgeFromServer`, `TreeNode`) and aggregated into a `GraphData` structure.
 
 ---
 
@@ -399,7 +398,7 @@ graph TD
     
     B --> B1[layout.tsx<br/>Root Layout]
     B --> B2[page.tsx<br/>Home Page]
-    B --> B3[api/papers/<br/>API Endpoints]
+    B --> B3[api/items/<br/>API Endpoints]
     
     C --> C1[graphs/<br/>Visualization]
     C --> C2[filter/<br/>Search & Filter]
@@ -413,20 +412,21 @@ graph TD
     
     C2 --> C2A[FilterPanel.tsx]
     C2 --> C2B[SearchField.tsx]
-    C2 --> C2C[PaperItem.tsx]
+    C2 --> C2C[ItemListRow.tsx]
     
     D --> D1[neo4j/<br/>Database Layer]
-    D --> D2[papers/model/<br/>Data Models]
+    D --> D2[items/model/<br/>Data Models]
     D --> D3[state/<br/>Context Providers]
     D --> D4[utils/<br/>Helper Functions]
     
     D1 --> D1A[neo4j-driver.ts]
     D1 --> D1B[neo4j-config.ts]
     
-    D2 --> D2A[GraphDataModel.ts]
+    D2 --> D2A[domain-types.ts]
     D2 --> D2B[dataAdapter.ts]
     D2 --> D2C[HierarchyPositioning.ts]
     D2 --> D2D[cypherQuery.ts]
+    D2 --> D2E[app-types.ts]
     
     E --> E1[store/<br/>Zustand Stores]
     E --> E2[GraphDataModel.ts]
@@ -464,7 +464,7 @@ graph TD
 | | Zustand | Local state (zoom, panels, cache) |
 | **Backend** | Next.js API Routes | RESTful API endpoints |
 | | Neo4j Driver | Database connectivity |
-| **Database** | Neo4j | Graph database for papers & relationships |
+| **Database** | Neo4j | Graph database for items, collections & relationships |
 | **Styling** | Emotion | CSS-in-JS styling solution |
 | | Styled Components | Component-level styling |
 
@@ -475,21 +475,20 @@ graph TD
 ```mermaid
 classDiagram
     class GraphData {
-        +nodes: PaperNodeType[]
-        +links: EdgeType[]
+        +itemNodes: GraphNodeType[]
+        +cloneNodes: GraphNodeType[]
+        +collectionNodes: CollectionNodeType[]
+        +edges: EdgeFromServer[]
         +treeNode: TreeNode
-        +allTopics: string[]
-        +allKeywords: string[]
     }
     
-    class PaperNodeType {
+    class GraphNodeType {
         +id: number
         +title: string
         +label: string
         +graphLevel: number
-        +topicNode: boolean
-        +grouping: boolean
-        +paperNode: PaperNodeTypeProps
+        +typeNumber: NodeKind
+        +props: ItemProps
         +x: number
         +y: number
         +color: string
@@ -497,7 +496,7 @@ classDiagram
     
     class TreeNode {
         +id: number
-        +data: PaperNodeType
+        +data: GraphNodeType
         +children: TreeNode[]
         +parent: TreeNode
         +x: number
@@ -505,25 +504,25 @@ classDiagram
         +depth: number
     }
     
-    class EdgeType {
+    class EdgeFromServer {
         +id: number
-        +source: number | object
-        +target: number | object
-        +type: string
+        +source: number
+        +target: number
+        +type: EdgeKind
         +weight: number
     }
     
     class NodesSelection {
-        +lastSelectedNodeData: PaperNodeType
+        +lastSelectedNodeData: AppBranchNode
         +itemsSelectionIds: number[]
-        +clonesSelection: any[]
+        +clonesSelection: AppBranchNode[]
         +selectionSource: SelectionSource
     }
     
-    GraphData --> PaperNodeType
-    GraphData --> EdgeType
+    GraphData --> GraphNodeType
+    GraphData --> EdgeFromServer
     GraphData --> TreeNode
-    TreeNode --> PaperNodeType
+    TreeNode --> GraphNodeType
     TreeNode --> TreeNode
 ```
 

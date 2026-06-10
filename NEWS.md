@@ -11,5 +11,5 @@ Initial open source release of the Ontoverse prototype.
 - Next.js-based unified frontend and backend
 - Neo4j database integration
 - Interactive graph visualization
-- Paper and topic exploration features
+- Item and collection exploration features
 
