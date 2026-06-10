@@ -1,4 +1,4 @@
-import { BranchNodeByD3, PaperNodeType } from "@/model/GraphDataModel";
+import { GraphNodeType } from "@/model/GraphDataModel";
 
 export const brakeStringIntoLines = (str:string,  output:string[]=[], maxLineLength:number=40, maxLines:number=3 ):string[] => {
 
@@ -41,7 +41,7 @@ export const brakeStringIntoLines = (str:string,  output:string[]=[], maxLineLen
  * @param {number} articleYear
  * @returns
  */
-export const truncateArticleAuthors = (authors:string[], articleYear?:number):string => {
+export const truncateItemAuthors = (authors:string[], articleYear?:number):string => {
   let truncated = authors[0];
   if (!truncated) {
     return '';
@@ -82,7 +82,7 @@ const COLUMNS_SCHEMA:{
 }[] = [
   {
     header: 'Authors',
-    accessor: ({authors}) => truncateArticleAuthors(authors),
+    accessor: ({authors}) => truncateItemAuthors(authors),
   },
   {
     header: 'Year',
@@ -102,13 +102,13 @@ const COLUMNS_SCHEMA:{
   },
 ];
   
-export const exportPapersToCSV = (papers:PaperNodeType[], filename:string) => {
+export const exportItemsToCSV = (items: GraphNodeType<unknown>[], filename:string) => {
   const csvRows:string[] = [COLUMNS_SCHEMA.map((colSchema) =>  colSchema.header).join(',')];
 
-  for(var i = 0; i < papers.length; i++){
-      const year = papers[i].year;
-      const paperProps = { ...papers[i].props, year};
-      const row = COLUMNS_SCHEMA.map((colSchema) => colSchema.accessor(paperProps))
+  for(var i = 0; i < items.length; i++){
+      const year = items[i].year;
+      const itemProps = { ...(items[i].props as Record<string, unknown>), year};
+      const row = COLUMNS_SCHEMA.map((colSchema) => colSchema.accessor(itemProps as Parameters<typeof colSchema.accessor>[0]))
 
       csvRows.push(row.join(','));
   }

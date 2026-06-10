@@ -1,4 +1,4 @@
-import { EdgeKind, Edge, PaperNodeType, BranchNodeByD3 } from "@/model/GraphDataModel";
+import { EdgeKind, Edge, BranchNodeByD3 } from "@/model/GraphDataModel";
 import { ZoomStore, useZoomStore } from "@/model/store/zoomStore";
 import { GRAPH_CONFIG } from "@/components/graphs/GraphConfig";
 
@@ -33,7 +33,7 @@ export function getCloneRadius(d: BranchNodeByD3) {
 
 
 // export function getNodeStrokeColor(d:BranchNodeByD3) {
-//   return (d.data.typeNumber > 1 || d.data?.topicLeaf)
+//   return (d.data.typeNumber > 1 || d.data?.collectionLeaf)
 //     ? d.data.color
 //     : COLOR_LEVELS[d.data?.graphLevel || 0];
 // }
@@ -50,7 +50,7 @@ export function getLabelFontWeigh(graphLevel:number) {//400)
 };
 
 export function getLabelStrokeColor(graphLevel:number) {
-  if (graphLevel <= 0) {//it's paper
+  if (graphLevel <= 0) {// leaf item node
     return 'none';
   }
 
@@ -69,28 +69,24 @@ export const getLabelStrokeWidth = (graphLevel:number, graphMaxLevel:number, zoo
 };
 
 export function getLabelDisplayValue(graphLevel:number, graphMaxLevel:number, zoomLevel:number) {
-  // const minZoom = paperNode ? GRAPH_CONFIG.showPaperNodeLabelAtZoomLevel.min : GRAPH_CONFIG.showGroupingNodeLabelAtZoomLevel.min;
-  // const maxZoom = paperNode ? GRAPH_CONFIG.showPaperNodeLabelAtZoomLevel.max : GRAPH_CONFIG.showGroupingNodeLabelAtZoomLevel.max;
-
-  // return (zoomLevel >= minZoom && zoomLevel <= maxZoom ) ? 'unset' : 'none';
   const { min, max }:{ min:number, max:number } = (graphLevel <= 0)
-    ? GRAPH_CONFIG.showPaperNodeLabelAtZoomLevel
+    ? GRAPH_CONFIG.showItemNodeLabelAtZoomLevel
     : GRAPH_CONFIG.collectionZoom[graphMaxLevel][graphLevel] as { min:number, max:number };
 
   return (zoomLevel >= min && zoomLevel <= max) ? 'unset' : 'none';
 };
 
-export function getSubLabelDisplayValue(paperNode:boolean, zoomLevel:number) {
+export function getSubLabelDisplayValue(isItemNode:boolean, zoomLevel:number) {
   if (!GRAPH_CONFIG.showGroupingConnections) {
     return 'none';
   }
 
-  return (zoomLevel >= GRAPH_CONFIG.showPaperNodeSubLabelAtZoomLevel.min && zoomLevel <= GRAPH_CONFIG.showPaperNodeSubLabelAtZoomLevel.max) ? 'unset' : 'none';
+  return (zoomLevel >= GRAPH_CONFIG.showItemNodeSubLabelAtZoomLevel.min && zoomLevel <= GRAPH_CONFIG.showItemNodeSubLabelAtZoomLevel.max) ? 'unset' : 'none';
 };
 
 export function getLinkOpacity(edge:Edge) {
   switch(edge.type){
-    case EdgeKind.MATCHING_PAPER:
+    case EdgeKind.MATCHING_ITEM:
       return 1;
 
     case EdgeKind.SIMILAR_TO_BETWEEN_TOPIC:
@@ -104,7 +100,7 @@ export function getLinkOpacity(edge:Edge) {
 
 export function getLinkColour (edge:Edge) {
   switch(edge.type){
-    case EdgeKind.MATCHING_PAPER:
+    case EdgeKind.MATCHING_ITEM:
       return 'black';
 
     case EdgeKind.SIMILAR_TO_BETWEEN_TOPIC:
@@ -118,7 +114,7 @@ export function getLinkColour (edge:Edge) {
 
 export function getLinkDisplayValue (edge:Edge) {
   switch(edge.type){
-    case EdgeKind.MATCHING_PAPER:
+    case EdgeKind.MATCHING_ITEM:
     case EdgeKind.SIMILAR_TO_BETWEEN_TOPIC:
     case EdgeKind.SIMILAR_TO_WITHIN_TOPIC:
       return 'unset';

@@ -1,9 +1,8 @@
 import { Selection } from "d3";
-import { LowHigh } from "@/lib/neo4j/neo4j-types";
 
-export interface OncoMapData{
-  nodes: any[];
-  links: any[];
+export interface OncoMapData {
+  nodes: unknown[];
+  links: unknown[];
 }
 
 export interface Size {
@@ -16,123 +15,115 @@ export interface EdgeFromServer {
   type: EdgeKind;
   source: number;
   target: number;
-  value: number; // do we need this one?
+  value: number;
   weight: number;
 }
 
 export interface Edge {
   id: number;
   type: EdgeKind;
-  source: BranchNodeByD3;
-  target: BranchNodeByD3;
-  value: number; // do we need this one?
+  source: BranchNodeByD3<unknown, unknown>;
+  target: BranchNodeByD3<unknown, unknown>;
+  value: number;
   weight: number;
 }
 
-export interface PaperNodeType {
-  typeNumber: number;
-  x: number;
-  y: number;
+export interface GraphNodeType<TProps = unknown> {
+  typeNumber: NodeKind;
   id: number;
   graphLevel: number;
-  paperNode:boolean;//depricated
-  topicLeaf:boolean;
-  title:string;
-  label: string;
-  grouping:boolean;
-  linkedNodeIds: string[];
-  color: string;
   group: string;
-  titleInLines:  string[] |  string;
-  year: string;
-  props: {
-    doi: string;
-    url: string;
-    interface: string;
-    journal: string;
-    abstract: string;
-    title: string;
-    authors: string[];
-    all_authors: string[];
-    meshTerms: string[];
-    pubmedID: number; // Converted from LowHigh at DB boundary
-    year: number; // Converted from LowHigh at DB boundary
-    keywords: string[];
-    itemID: number; // Converted from LowHigh at DB boundary. An unique id that is different from the parent 'id' prop. It is the same for all the clones.
-    nodeID: string; // F.e.: '10224_1_1' that decodes according to the pattern: 'itemID_graphLevel_cloneNumber'
-  };
+  color: string;
+  linkedNodeIds: string[];
+  title: string;
+  label: string;
+  titleInLines: string[] | string;
+  year?: string;
+  props: TProps;
+  collectionLeaf?: boolean;
+  x?: number;
+  y?: number;
+  vx?: number;
+  vy?: number;
 }
 
-export interface TopicNodeType extends PaperNodeType{
-
+export interface CollectionNodeType<TCollectionProps = unknown>
+  extends GraphNodeType<TCollectionProps> {
+  collectionLeaf?: boolean;
+  fx?: number;
+  fy?: number;
 }
 
-
-
-
-// RawNode and RawRelationship moved to lib/neo4j/neo4j-types.ts
-
-
-export type GraphData = {
-  treeNode:TreeNode,
-  nodes: (PaperNodeType)[];
-  topicNodes: PaperNodeType[];
-  paperNodes: PaperNodeType[];
-  paperCloneNodes: PaperNodeType[];
-  edges: Edge[];
+export type GraphData<
+  TItemProps = unknown,
+  TCollectionProps = unknown,
+> = {
+  treeNode: TreeNode<TItemProps, TCollectionProps> | undefined;
+  nodes: GraphNodeType<TItemProps | TCollectionProps>[];
+  collectionNodes: CollectionNodeType<TCollectionProps>[];
+  itemNodes: GraphNodeType<TItemProps>[];
+  cloneNodes: GraphNodeType<TItemProps>[];
+  edges: Array<EdgeFromServer | Edge>;
+  edgesToSend: EdgeFromServer[];
 };
 
-export type RichGraphData = {
-    nodes: BranchNodeByD3[],
-    paperNodes: BranchNodeByD3[],
+export type RichGraphData<
+  TItemProps = unknown,
+  TCollectionProps = unknown,
+> = {
+  nodes: BranchNodeByD3<TItemProps, TCollectionProps>[];
+  itemNodes: BranchNodeByD3<TItemProps, TCollectionProps>[];
 };
-
 
 export interface LinkType {
-  id: number,
-  start: number,
-  end: number,
-  type: string,
-  properties: any,
+  id: number;
+  start: number;
+  end: number;
+  type: string;
+  properties: unknown;
 }
 
-
-export interface TreeNode extends TopicNodeType {
+export interface TreeNode<
+  TItemProps = unknown,
+  TCollectionProps = unknown,
+> extends CollectionNodeType<TCollectionProps> {
   typeNumber: number;
   id: number;
-  // graphLevel: number;
-  topicLeaf: boolean;
-  children?: (TreeNode | BasicPaperNode)[];
-  value?:number;
-};
-
-export interface BasicPaperNode {
-  typeNumber: number;
-  id: number;
-  value:number;
+  collectionLeaf: boolean;
+  children?: (TreeNode<TItemProps, TCollectionProps> | BasicItemNode)[];
+  value?: number;
 }
 
+export interface BasicItemNode {
+  typeNumber: number;
+  id: number;
+  value: number;
+}
 
 export interface NodeSelection {
-  lastSelected:boolean;
-  selected:boolean;
+  lastSelected: boolean;
+  selected: boolean;
 }
-export interface BranchNodeByD3 extends NodeSelection {
-  data: TopicNodeType;
+
+export interface BranchNodeByD3<
+  TItemProps = unknown,
+  TCollectionProps = unknown,
+> extends NodeSelection {
+  data: GraphNodeType<TItemProps | TCollectionProps>;
   depth: number;
   height: number;
-  parent: BranchNodeByD3;
-  children: BranchNodeByD3[];
-  r:number;
-  value:number;
-  x:number;
-  y:number;
+  parent: BranchNodeByD3<TItemProps, TCollectionProps>;
+  children: BranchNodeByD3<TItemProps, TCollectionProps>[];
+  r: number;
+  value: number;
+  x: number;
+  y: number;
 }
 
 export interface EdgeByd3 {
   id: number;
-  source: BranchNodeByD3;
-  target: BranchNodeByD3;
+  source: BranchNodeByD3<unknown, unknown>;
+  target: BranchNodeByD3<unknown, unknown>;
   type: EdgeKind;
   value: number;
   weight: number;
@@ -142,24 +133,34 @@ export enum EdgeKind {
   SIMILAR_TO_BETWEEN_TOPIC = "SIMILAR_TO_BETWEEN_TOPIC",
   MEMBER_OF = "MEMBER_OF",
   SIMILAR_TO_WITHIN_TOPIC = "SIMILAR_TO_WITHIN_TOPIC",
-  MATCHING_PAPER = "MATCHING_PAPER",
+  MATCHING_ITEM = "MATCHING_PAPER",
   PARENT_OF = "PARENT_OF",
 }
 
-
 export enum NodeKind {
   Collection = 1,
-  Paper = 2,
-  PaperClone = 3,
+  Item = 2,
+  Clone = 3,
 }
 
-const getNodeKindByGroupName = (groupName: keyof typeof NodeKind): NodeKind => {
-  if (groupName in NodeKind) {
-    return  NodeKind[groupName];
-  }
+/** Neo4j label strings — DB schema, not renamed in Cypher */
+export const DB_LABEL = {
+  Collection: "Collection",
+  Item: "Paper",
+  Clone: "PaperClone",
+} as const;
 
-  console.warn('Invalid NodeKind key!');
-  return -1 as NodeKind;
-}
+export const APP_GROUP = {
+  Collection: "Collection",
+  Item: "Item",
+  Clone: "Clone",
+} as const;
 
-
+export const DB_LABEL_TO_NODE_KIND: Record<
+  (typeof DB_LABEL)[keyof typeof DB_LABEL],
+  NodeKind
+> = {
+  [DB_LABEL.Collection]: NodeKind.Collection,
+  [DB_LABEL.Item]: NodeKind.Item,
+  [DB_LABEL.Clone]: NodeKind.Clone,
+};

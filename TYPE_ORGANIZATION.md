@@ -5,153 +5,121 @@ This document clarifies which types belong to which layer: DB, Domain, Graph, or
 ## Type Categories
 
 ### 1. **DB Types** (Neo4j Driver Structures)
-**Location**: `lib/neo4j/neo4j-types.ts`
+**Location**: [`lib/neo4j/neo4j-types.ts`](lib/neo4j/neo4j-types.ts)
 
-These represent the raw structure returned by Neo4j driver:
+These represent the raw structure returned by the Neo4j driver:
 
-- ✅ `LowHigh` - Neo4j integer representation `{low: number, high: number}`
-- ✅ `RawNode` - Raw Neo4j node structure
-- ✅ `RawRelationship` - Raw Neo4j relationship structure
-- ✅ `Field` - Neo4j field structure wrapping domain properties
-- ✅ `DBRecord` - Raw Neo4j record structure
+- `LowHigh` — Neo4j integer representation `{low: number, high: number}`
+- `RawNode` — Raw Neo4j node structure
+- `RawRelationship` — Raw Neo4j relationship structure
+- `Field` — Neo4j field structure wrapping domain properties
+- `DBRecord` — Raw Neo4j record structure
 
-**Purpose**: These are pure database layer types. They represent exactly what Neo4j driver returns.
+**Purpose**: Pure database layer types matching what the Neo4j driver returns.
 
-**Dependencies**: Imports domain types (`PaperFieldProps`, `CollectionFieldProps`) to wrap them in Neo4j structures.
+**Note**: Raw node properties may still use legacy Neo4j field names (e.g. `similarPapers`) even though domain types use `similarItems`.
 
 ### 2. **Domain Types** (Business Entities)
-**Location**: `lib/papers/model/domain-types.ts`
+**Location**: [`lib/items/model/domain-types.ts`](lib/items/model/domain-types.ts)
 
-These represent the business domain entities (database-agnostic):
+Database-agnostic business entities:
 
-- ✅ `PaperFieldProps` - Properties of a Paper entity
-- ✅ `CollectionFieldProps` - Properties of a Collection entity
+- `ItemProps` — Properties of an item entity (literature record)
+- `CollectionProps` — Properties of a collection entity
 
-**Purpose**: These are pure domain/business logic types. They are **database-agnostic** and use regular JavaScript types (`number`, `string`, etc.) instead of database-specific types.
+**Key design decision**: Domain types use `number`, `string`, etc. Conversion from `LowHigh` to `number` happens at the DB boundary in `dataAdapter.ts`.
 
-**Key Design Decision**: Domain types use `number` instead of `LowHigh`. Conversion from `LowHigh` to `number` happens at the DB boundary in `dataAdapter.ts`.
+**Dependencies**: None (no circular dependencies).
 
-**Dependencies**: None (completely independent, no circular dependencies).
+### 3. **App-Bound Types** (Concrete Props Binding)
+**Location**: [`lib/items/app-types.ts`](lib/items/app-types.ts)
 
-### 3. **Graph Types** (Visualization/Graph Structure)
-**Location**: `model/GraphDataModel.ts` (primary) and `lib/papers/model/GraphDataModel.ts` (DTOs)
+The only place where concrete domain props are bound to generic graph types:
 
-These are for D3.js graph visualization and API responses:
+- `AppItemProps`, `AppCollectionProps`
+- `AppItemNode`, `AppCollectionNode`, `AppBranchNode`, `AppGraphData`
+- `useRichDataStore` — Zustand store typed with `AppItemProps` / `AppCollectionProps`
 
-**In `model/GraphDataModel.ts`** (D3 Visualization Types):
-- `PaperNodeType` - Node for graph visualization (has x, y, color, etc.)
-- `TopicNodeType` - Topic node extending PaperNodeType
-- `BranchNodeByD3` - D3 hierarchy node structure
-- `Edge` - Graph edge with D3 references
-- `EdgeFromServer` - Edge DTO from server
-- `EdgeByd3` - D3 edge structure
-- `TreeNode` - Tree structure for hierarchy
-- `GraphData` - Complete graph data structure for visualization
-- `RichGraphData` - Enriched graph data
-- `EdgeKind` - Enum for edge types
-- `NodeKind` - Enum for node types
+**Purpose**: Components and stores import from here; they do not import `domain-types.ts` directly.
 
-**In `lib/papers/model/GraphDataModel.ts`** (DTO Types for API):
-- `PaperNodeType` - Paper node structure for API responses (no x, y coordinates)
-- `TopicNodeType` - Topic node structure for API responses
-- `EdgeType` - Edge structure for API responses
-- `PaperNodeTypeProps` - Props for paper nodes in API responses
-- `GraphData` - Graph data structure returned from `/api/papers` endpoint
+### 4. **Graph Types** (Visualization / Graph Structure)
+**Location**: [`model/GraphDataModel.ts`](model/GraphDataModel.ts)
 
-**Purpose**: 
-- `model/GraphDataModel.ts` - Types for D3.js visualization (used by components)
-- `lib/papers/model/GraphDataModel.ts` - Types for API responses (used by `dataAdapter.ts`)
+Generic, database-agnostic graph structures used by D3 visualization and API responses:
 
-**Key Design Decision**: Both use `number` instead of `LowHigh` for IDs and numeric properties. Conversion happens at DB boundary.
+- `GraphNodeType<TProps>` — Generic node (item, clone, or collection)
+- `CollectionNodeType<TCollectionProps>` — Collection node
+- `GraphData<TItemProps, TCollectionProps>` — Complete graph payload
+- `BranchNodeByD3<TItemProps, TCollectionProps>` — D3 hierarchy node
+- `Edge`, `EdgeFromServer`, `TreeNode`
+- `NodeKind` — `{ Collection = 1, Item = 2, Clone = 3 }`
+- `EdgeKind` — Relationship type enum (values match Neo4j rel types)
+- `DB_LABEL` — Maps app kinds to Neo4j labels (`Item → "Paper"`, `Clone → "PaperClone"`)
 
-### 4. **Transfer Objects (DTOs)**
-**Location**: `lib/papers/model/dataAdapter.ts` and `app/api/papers/route.ts`
+**Purpose**: Shared graph types parameterized by props. Neo4j label strings in `DB_LABEL` and Cypher are unchanged.
 
-These are data structures for API communication:
+### 5. **Transfer Objects (DTOs) / Conversion Layer**
+**Location**: [`lib/items/model/dataAdapter.ts`](lib/items/model/dataAdapter.ts), [`app/api/items/route.ts`](app/api/items/route.ts)
 
-- `GraphData` in `dataAdapter.ts` - Returned from `/api/papers` endpoint
-- `EdgeFromServer` in `model/GraphDataModel.ts` - Edge data from server
-
-**Purpose**: Lightweight objects optimized for network transfer.
+- `dataAdapter()` — Converts raw Neo4j records to `GraphData<ItemProps, CollectionProps>`
+- `GraphData` returned from `/api/items` endpoint
 
 ## Type Flow
 
 ```
-Neo4j Database
+Neo4j Database (labels: Paper, PaperClone, Collection)
     ↓
 [DB Types] RawNode, RawRelationship, LowHigh
     ↓ (conversion in dataAdapter.ts)
-[Domain Types] PaperFieldProps, CollectionFieldProps (number, not LowHigh)
+[Domain Types] ItemProps, CollectionProps
+    ↓ (binding in app-types.ts)
+[App Types] AppItemNode, AppBranchNode, useRichDataStore
     ↓
-[DTO Types] GraphData, PaperNodeType (for API)
-    ↓
-[Graph Types] BranchNodeByD3, Edge (for D3 visualization)
+[Graph Types] BranchNodeByD3, Edge (D3 visualization)
 ```
 
 ## Conversion Points
 
 All `LowHigh` → `number` conversions happen at the **DB boundary**:
 
-1. **`lib/papers/model/dataAdapter.ts`**:
-   - `convertToPaperType()` - Converts `RawNode` to `PaperNodeType`
-   - `convertToTopicType()` - Converts `RawNode` to `TopicNodeType`
-   - `convertToEdgeType()` - Converts `RawRelationship` to `EdgeType`
-   - Converts `item.identity.low`, `props.graphLevel.low`, etc. to `number`
+1. **`lib/items/model/dataAdapter.ts`**:
+   - `convertToItemType()` — `RawNode` → item node
+   - `convertToCloneType()` — `RawNode` → clone node
+   - `convertToCollectionType()` — `RawNode` → collection node
+   - Maps `similarPapers` (DB) → `similarItems` (domain)
 
-2. **`lib/papers/model/HierarchyPositioning.ts`**:
-   - Converts raw Neo4j structures for hierarchy building
+2. **`lib/items/model/HierarchyPositioning.ts`**:
+   - Builds tree layout from raw records and `GraphData`
 
 ## Key Principles
 
-1. **Domain Types are Database-Agnostic**: Domain types use `number`, `string`, etc., not database-specific types like `LowHigh`.
-
-2. **Conversion at Boundaries**: All database-specific type conversions happen at the DB boundary (in `dataAdapter.ts`), not throughout the codebase.
-
-3. **Clear Separation**: 
-   - **DB Layer** = Database structures (Neo4j-specific)
-   - **Domain Layer** = Business logic (database-agnostic)
-   - **DTO Layer** = API transfer structures
-   - **Graph Layer** = Visualization structures (D3.js-specific)
-
-4. **No Circular Dependencies**: Domain types don't import DB types. DB types can import domain types (one-way dependency).
+1. **Domain types are database-agnostic** — use plain JS types, not `LowHigh`.
+2. **Conversion at boundaries** — DB-specific conversions only in `dataAdapter.ts`.
+3. **Generic graph layer** — `model/GraphDataModel.ts` is parameterized; concrete props bound in `lib/items/app-types.ts`.
+4. **Neo4j schema unchanged** — Cypher queries and `DB_LABEL` still reference `Paper` / `PaperClone` node labels.
+5. **No circular dependencies** — Domain types do not import DB types.
 
 ## Files Organization
 
 ```
 lib/neo4j/
-  └── neo4j-types.ts          # Pure Neo4j driver types
-      ├── LowHigh
-      ├── RawNode
-      ├── RawRelationship
-      ├── Field
-      └── DBRecord
+  └── neo4j-types.ts              # Neo4j driver types
 
-lib/papers/model/
-  ├── domain-types.ts         # Pure domain entities (no DB dependencies)
-  │   ├── PaperFieldProps
-  │   └── CollectionFieldProps
-  │
-  ├── GraphDataModel.ts       # DTO types for API responses
-  │   ├── PaperNodeType (API)
-  │   ├── TopicNodeType (API)
-  │   ├── EdgeType (API)
-  │   └── GraphData (API)
-  │
-  └── dataAdapter.ts          # Conversion layer (DB → Domain → DTO)
+lib/items/
+  ├── app-types.ts                # App-bound types + useRichDataStore
+  └── model/
+      ├── domain-types.ts         # ItemProps, CollectionProps
+      ├── dataAdapter.ts          # DB → Domain → GraphData
+      ├── HierarchyPositioning.ts # Tree layout
+      ├── cypherQuery.ts          # Cypher (uses Paper/PaperClone labels)
+      ├── Stats.ts
+      └── stringUtils.ts
 
 model/
-  └── GraphDataModel.ts       # D3-specific graph types
-      ├── PaperNodeType (D3)
-      ├── BranchNodeByD3
-      ├── Edge (D3)
-      ├── TreeNode
-      └── GraphData (D3)
+  ├── GraphDataModel.ts           # Generic graph types
+  └── store/
+      └── richDataStore.ts        # Generic store factory
+
+app/api/items/
+  └── route.ts                    # GET /api/items
 ```
-
-## Benefits
-
-1. **No Circular Dependencies**: Domain types are independent of DB types
-2. **Clear Separation**: Each layer has clear responsibilities
-3. **Type Safety**: Conversions are explicit at boundaries
-4. **Maintainability**: Easy to understand which types belong where
-5. **Testability**: Domain logic can be tested without database dependencies

@@ -124,7 +124,7 @@ See `DOCKER_TEST.md` for more detailed Docker instructions.
 - `components/` - React components
 - `lib/` - Shared utilities and libraries
   - `neo4j/` - Neo4j database utilities
-  - `papers/` - Paper data models and adapters
+  - `items/` - Item data models, adapters, and app-bound types
   - `utils/` - Utility functions
   - `state/` - State management
 - `model/` - Data models and types
@@ -132,7 +132,7 @@ See `DOCKER_TEST.md` for more detailed Docker instructions.
 
 ## API Routes
 
-- `/api/papers` - GET endpoint to fetch papers data from Neo4j
+- `/api/items` - GET endpoint to fetch graph data from Neo4j
 
 ## Environment Variables
 

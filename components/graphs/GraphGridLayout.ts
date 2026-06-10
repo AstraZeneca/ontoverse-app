@@ -22,7 +22,7 @@ import { getTreeStats } from "@/model/Stats";
 // import { Dispatch, SetStateAction } from "react";
 import { NodesSelection, SelectionSource } from "@/lib/state/selectionReducer";
 import { ZoomStore, useZoomStore } from "@/model/store/zoomStore";
-import { useRichDataStore } from "@/model/store/richDataStore";
+import { AppBranchNode, useRichDataStore } from "@/lib/items/app-types";
 import {
   SVGGraphBGGroupSelection,
   useSvgElemsStore,
@@ -69,7 +69,7 @@ const getAllNodesList = (tree: BranchNodeByD3): BranchNodeByD3[] => {
   const flattenNodes: BranchNodeByD3[] = [node as BranchNodeByD3];
 
   children?.forEach((treeBranch) => {
-    if ((treeBranch as unknown as TreeNode).topicLeaf) {
+    if ((treeBranch as unknown as TreeNode).collectionLeaf) {
       flattenNodes.push(treeBranch as BranchNodeByD3);
     } else {
       flattenNodes.push(...getAllNodesList(treeBranch));
@@ -130,14 +130,10 @@ export const initGraph = (
 
   hierarchyGraph = new HierarchyGraph(graphData, onNodeClick, rootSVGGroup);
 
-  const rootNode: BranchNodeByD3 =
-    hierarchyGraph.getRootNode() as unknown as BranchNodeByD3;
-  // console.log('rootNode',rootNode);
-  // console.log('>>>> stats A', getTreeStats(rootNode));
-  allNodeList = getAllNodesList(rootNode);
-  // console.log('>>>>>>>>>>>allNodeList',[...allNodeList]);
+  const rootNode = hierarchyGraph.getRootNode();
+  allNodeList = rootNode.descendants() as unknown as BranchNodeByD3[];
 
-  useRichDataStore.getState().setRichData(allNodeList);
+  useRichDataStore.getState().setRichData(allNodeList as AppBranchNode[]);
   // setState({
   //   nodes: allNodeList,
   //   itemNodes: allNodeList.filter(n => n.data.typeNumber !== NodeKind.Collection),
@@ -146,7 +142,7 @@ export const initGraph = (
   //TODO:Depricate the 'setRichData' function below
   // setRichData({
   //   nodes: allNodeList,
-  //   paperNodes: allNodeList.filter(n => n.data.typeNumber === NodeKind.Paper),
+  //   itemNodes: allNodeList.filter(n => n.data.typeNumber === NodeKind.Item),
   // });
   let positionsBBox: BBox = getPositionsBoundingBox(
     allNodeList.map(({ x, y }) => ({ x, y }))
@@ -174,7 +170,7 @@ export const initGraph = (
         y: Math.round(node.y - positionsBBox.y0), // + viewportHeight*0.5),
         z: (node.data.graphLevel || 0.5) * 10,
         r: node.r,
-        isTopic: node.data.topicLeaf,
+        isTopic: node.data.collectionLeaf,
       };
     });
     // console.log('>>>> stats B', getTreeStats(rootNode));

@@ -6,7 +6,7 @@ import { useSvgElemsStore } from "@/model/store/svgElemsStore";
 import { debounce } from "@mui/material";
 import {
   BranchNodeByD3,
-  TopicNodeType,
+  CollectionNodeType,
 } from "@/model/GraphDataModel";
 
 export interface BBox {

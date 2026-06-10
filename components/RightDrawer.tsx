@@ -18,7 +18,8 @@ import DrawerHeader, { DRAWER_WIDTH } from "./layout/DrawerHeader";
 import Logo from "./Logo";
 import ChatAssistant from "./ChatAssistant";
 import { Modal } from "@mui/material";
-import { PaperNodeType } from "@/model/GraphDataModel";
+import { AppItemNode, AppBranchNode } from "@/lib/items/app-types";
+import { NodeKind } from "@/model/GraphDataModel";
 import { useEffect, useState, Suspense } from "react";
 import { useSelection } from "@/lib/state/SelectionProvider";
 import { useSelectStore } from "@/model/store/useSelection";
@@ -154,39 +155,15 @@ export default function RightDrawer() {
         </DrawerHeader>
         <Divider />
          <DraggablePanels
-          paperDetailsProps={
+          itemDetailsProps={
             lastSelectedNodeData &&
             lastSelectedNodeData.data?.id > 0 &&
-            !lastSelectedNodeData.data?.grouping
-              ? { d: lastSelectedNodeData.data as PaperNodeType }
+            lastSelectedNodeData.data?.typeNumber !== NodeKind.Collection
+              ? { d: lastSelectedNodeData.data as AppItemNode }
               : undefined
           }
-          clonesSelection={clonesSelection}
+          clonesSelection={clonesSelection as AppBranchNode[] | undefined}
         />
-        {
-          //show details panel here dep. on node type
-          // <Box sx={{ overflow: "auto" }}>
-          //   {
-          //     // console.log("RightDrawer => lastSelectedNodeData",lastSelectedNodeData)
-          //   }
-          //   {lastSelectedNodeData &&
-          //   lastSelectedNodeData.data?.id > 0 &&
-          //   lastSelectedNodeData.data?.grouping ? (
-          //     <GroupingNodeDetailsPanel
-          //       d={lastSelectedNodeData.data as TopicNodeType}
-          //     />
-          //   ) : null}
-          //   {lastSelectedNodeData &&
-          //   lastSelectedNodeData.data?.id > 0 &&
-          //   !lastSelectedNodeData.data?.grouping ? (
-          //     <PaperDetailsPanel
-          //       d={lastSelectedNodeData.data as PaperNodeType}
-          //     />
-          //   ) : null}
-
-          //   <CloneChipsToggle clonesSelection={clonesSelection} />
-          // </Box>
-        }
       </Drawer>
       <Modal
         open={settingsPanelOpen}

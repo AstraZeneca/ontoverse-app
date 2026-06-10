@@ -108,7 +108,7 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({ open, onClose }) =
           </Typography>
           <Typography variant="body2">
             Hi! I'm here to guide you through the Ontoverse.
-            Feel free to ask me anything about papers, topics, or navigation.
+            Feel free to ask me anything about items, collections, or navigation.
           </Typography>
         </PlaceholderMessage>
       </ChatContent>

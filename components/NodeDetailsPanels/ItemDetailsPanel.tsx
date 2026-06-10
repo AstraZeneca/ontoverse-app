@@ -1,6 +1,6 @@
 import { Box, Chip, IconButton, Link, Tooltip, Typography } from "@mui/material";
 import { copyTextToClipboard, getGGScholarUrlByDoi } from "@/lib/utils/srtingUtils";
-import { PaperNodeType } from "@/model/GraphDataModel";
+import { AppItemNode } from "@/lib/items/app-types";
 import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined';
 
 /**
@@ -39,7 +39,7 @@ import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined';
  year : "2010"
  */
 
-export const PaperDetailsPanel = ({ d }: { d: PaperNodeType }) => {
+export const ItemDetailsPanel = ({ d }: { d: AppItemNode }) => {
     const { title, year, props } = d;
     // console.log('SELECTED NODE =>',d);
     // console.log('props?.authors:',props?.authors);
@@ -93,7 +93,7 @@ export const PaperDetailsPanel = ({ d }: { d: PaperNodeType }) => {
             </Box>
         );
     } catch (error) {
-        console.error("An error occurred while rendering Paper Details:", error,'Something went wrong! Check if the data structure is valid:',d);
+        console.error("An error occurred while rendering Item Details:", error,'Something went wrong! Check if the data structure is valid:',d);
         return (
             <Box m={2} flex={"1"}>
                 <Typography variant="h6" color="error">Oops! Something went wrong. </Typography>
@@ -110,5 +110,5 @@ export const PaperDetailsPanel = ({ d }: { d: PaperNodeType }) => {
 //   id {id}
 // </Typography>
 
-export default PaperDetailsPanel;
+export default ItemDetailsPanel;
 

@@ -40,8 +40,8 @@ export const renderConnectedLines = (linkSVGGroup: SVGEdgesGroupSelection, direc
 export const renderLinesBetweenTargetAndClones = (linkSVGGroup: SVGEdgesGroupSelection, target:BranchNodeByD3, clonesSelection: BranchNodeByD3[], includeCloneCloneConnections:boolean):SVGLineElementSelection => {
   const currentZoomLevel = (useZoomStore.getState() as ZoomStore).zoomLevel;
   const allClonesEgdesData = includeCloneCloneConnections 
-    ? generateAllNodesConnections(clonesSelection, EdgeKind.MATCHING_PAPER)
-    : generateTargetNodesConnections(target, clonesSelection, EdgeKind.MATCHING_PAPER);
+    ? generateAllNodesConnections(clonesSelection, EdgeKind.MATCHING_ITEM)
+    : generateTargetNodesConnections(target, clonesSelection, EdgeKind.MATCHING_ITEM);
     
 //console.log('renderLinesBetweenClones >>> clonesSelection', clonesSelection);
 //console.log('renderLinesBetweenClones >>> linkSVGGroup', linkSVGGroup);
