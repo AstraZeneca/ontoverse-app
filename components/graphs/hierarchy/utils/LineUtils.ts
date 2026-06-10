@@ -1,7 +1,7 @@
 import { BranchNodeByD3, Edge, EdgeKind } from "@/model/GraphDataModel";
 
 const EDGE_TYPE_NUMBER_MAP:Record<EdgeKind, number> = {
-  [EdgeKind.MATCHING_PAPER]: 3,
+  [EdgeKind.MATCHING_ITEM]: 3,
   [EdgeKind.SIMILAR_TO_WITHIN_TOPIC]: 2,
   [EdgeKind.SIMILAR_TO_BETWEEN_TOPIC]: 1,
   [EdgeKind.MEMBER_OF]: 0,

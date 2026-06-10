@@ -1,61 +1,91 @@
-import { BranchNodeByD3, Edge, EdgeFromServer, PaperNodeType, TreeNode } from "./GraphDataModel";
+import {
+  BranchNodeByD3,
+  Edge,
+  EdgeFromServer,
+  GraphNodeType,
+  NodeKind,
+  TreeNode,
+} from "./GraphDataModel";
 
-export const replaceNodeIdWithSolidData = (treeNode:TreeNode, solidNodes:PaperNodeType[]):TreeNode | undefined => {
-    if (!treeNode) return;
-    const updatedChildren: PaperNodeType[] = [];
-    
-    treeNode.children?.forEach((child) => {
-      if (child.typeNumber > 1){ //it is Paper (2) or PaperClone (3) in shape of BasicPaperType
-        const solidNode = solidNodes.find(solidNode => solidNode.id === child.id);
-        if (!child.typeNumber){
-        //console.log('if (!child.typeNumber)');
-        }
-        if (!solidNode?.typeNumber){
-        //console.log('if (!child.typeNumber)');
-        }
-        if (solidNode) {
-          updatedChildren.push({...solidNode, value: child.value, typeNumber:child.typeNumber} as TreeNode);
-        } else {
-          console.error(`Paper node ${child} not found in all papers array`);
-        }
-      } else if (child.typeNumber === 1) { //Topic node
-        updatedChildren.push(replaceNodeIdWithSolidData(child as TreeNode, solidNodes) as TreeNode);
+export const replaceNodeIdWithSolidData = <
+  TItemProps,
+  TCollectionProps,
+>(
+  treeNode: TreeNode<TItemProps, TCollectionProps> | undefined,
+  solidNodes: GraphNodeType<TItemProps | TCollectionProps>[],
+): TreeNode<TItemProps, TCollectionProps> | undefined => {
+  if (!treeNode) return;
+  const updatedChildren: (
+    | TreeNode<TItemProps, TCollectionProps>
+    | GraphNodeType<TItemProps>
+  )[] = [];
+
+  treeNode.children?.forEach((child) => {
+    if (child.typeNumber > NodeKind.Collection) {
+      const solidNode = solidNodes.find((solidNode) => solidNode.id === child.id);
+      if (solidNode) {
+        updatedChildren.push({
+          ...solidNode,
+          value: child.value,
+          typeNumber: child.typeNumber,
+        } as TreeNode<TItemProps, TCollectionProps>);
       } else {
-        console.error('Error >> unknown child.typeNumber:',child.typeNumber, 'child',child);
-        
+        console.error(`Item node ${child.id} not found in all items array`);
       }
-    });
-    
-    return { ...treeNode, children: updatedChildren };
-  }
-  
-
-  export const replaceEdgeIdWithSolidData = (edgesFromServer:EdgeFromServer[], solidNodes: BranchNodeByD3[]) => {
-    const throwError = (msg:string) => {
-      throw new Error('Error: no solid node ID matching edge.source!');
+    } else if (child.typeNumber === NodeKind.Collection) {
+      updatedChildren.push(
+        replaceNodeIdWithSolidData(
+          child as TreeNode<TItemProps, TCollectionProps>,
+          solidNodes,
+        ) as TreeNode<TItemProps, TCollectionProps>,
+      );
+    } else {
+      console.error(
+        "Error >> unknown child.typeNumber:",
+        child.typeNumber,
+        "child",
+        child,
+      );
     }
-    const solidNodesRefsByIndex = solidNodes.reduce((acc:Record<number, BranchNodeByD3>, solidNode:BranchNodeByD3)=>{
+  });
+
+  return { ...treeNode, children: updatedChildren as TreeNode<TItemProps, TCollectionProps>['children'] };
+};
+
+export const replaceEdgeIdWithSolidData = (
+  edgesFromServer: EdgeFromServer[],
+  solidNodes: BranchNodeByD3<unknown, unknown>[],
+) => {
+  const throwError = (msg: string) => {
+    throw new Error(msg);
+  };
+  const solidNodesRefsByIndex = solidNodes.reduce(
+    (acc: Record<number, BranchNodeByD3<unknown, unknown>>, solidNode) => {
       acc[solidNode.data.id] = solidNode;
       return acc;
-    },{});
-    
-    const edges:Edge[] = [];
-    try {
-      edgesFromServer.forEach((edgeFromServer, i) => {
+    },
+    {},
+  );
 
-        edges.push({
-          id: edgeFromServer.id,
-          type: edgeFromServer.type,
-          source: solidNodesRefsByIndex[edgeFromServer.source as number] || throwError('Error: no solid node ID matching edge.source!'),
-          target: solidNodesRefsByIndex[edgeFromServer.target as number] || throwError('Error: no solid node ID matching edge.target!'),
-          value: edgeFromServer.value, // do we need this one?
-          weight: edgeFromServer.weight,
-        })
+  const edges: Edge[] = [];
+  try {
+    edgesFromServer.forEach((edgeFromServer) => {
+      edges.push({
+        id: edgeFromServer.id,
+        type: edgeFromServer.type,
+        source:
+          solidNodesRefsByIndex[edgeFromServer.source as number] ||
+          throwError("Error: no solid node ID matching edge.source!"),
+        target:
+          solidNodesRefsByIndex[edgeFromServer.target as number] ||
+          throwError("Error: no solid node ID matching edge.target!"),
+        value: edgeFromServer.value,
+        weight: edgeFromServer.weight,
       });
-
-    } catch (e) {
-      console.error(e);
-    }
-
-    return edges;
+    });
+  } catch (e) {
+    console.error(e);
   }
+
+  return edges;
+};

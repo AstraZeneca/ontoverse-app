@@ -19,8 +19,8 @@ interface Config {
     COLLECTION_ZOOM_MAX: number;
     ZOOM_CONFIG: {
       collectionZoom: (null | { min: number; max: number })[][];
-      showPaperNodeLabelAtZoomLevel: { min: number; max: number };
-      showPaperNodeSubLabelAtZoomLevel: { min: number; max: number };
+      showItemNodeLabelAtZoomLevel: { min: number; max: number };
+      showItemNodeSubLabelAtZoomLevel: { min: number; max: number };
       showGroupingLinkLinesAtZoomLevel: { min: number; max: number };
     };
   };
@@ -57,8 +57,8 @@ const configs: Record<ConfigId, Config> = {
           [null, { min: COLLECTION_ZOOM_MIN, max: 1.8 }, { min: 1.5, max: 2.4 }, { min: 1.9, max: 4.6 }, { min: 3.2, max: COLLECTION_ZOOM_MAX }],
           [null, { min: COLLECTION_ZOOM_MIN, max: 3.5 }, { min: 1.1, max: 40 }, { min: 2, max: 40 }, { min: 3, max: 40 }, { min: 4, max: COLLECTION_ZOOM_MAX }],
         ],
-        showPaperNodeLabelAtZoomLevel: { min: 7, max: MAX_ZOOM },// paper's Authors & Year
-        showPaperNodeSubLabelAtZoomLevel: { min: 10, max: MAX_ZOOM },// paper's 2 lines title
+        showItemNodeLabelAtZoomLevel: { min: 7, max: MAX_ZOOM },// paper's Authors & Year
+        showItemNodeSubLabelAtZoomLevel: { min: 10, max: MAX_ZOOM },// paper's 2 lines title
         showGroupingLinkLinesAtZoomLevel: { min: 0, max: MAX_ZOOM },//edges visibility
       },
     }
@@ -91,8 +91,8 @@ const configs: Record<ConfigId, Config> = {
           [null, { min: COLLECTION_ZOOM_MIN, max: 1.8 }, { min: 1.5, max: 2.4 }, { min: 1.9, max: 4.6 }, { min: 3.2, max: COLLECTION_ZOOM_MAX }],
           [null, { min: COLLECTION_ZOOM_MIN, max: 3.5 }, { min: 1.1, max: 40 }, { min: 2, max: 40 }, { min: 3, max: 40 }, { min: 4, max: COLLECTION_ZOOM_MAX }],
         ],
-        showPaperNodeLabelAtZoomLevel: { min: 10, max: MAX_ZOOM },// paper's Authors & Year
-        showPaperNodeSubLabelAtZoomLevel: { min: MAX_ZOOM, max: MAX_ZOOM },// paper's 2 lines title
+        showItemNodeLabelAtZoomLevel: { min: 10, max: MAX_ZOOM },// paper's Authors & Year
+        showItemNodeSubLabelAtZoomLevel: { min: MAX_ZOOM, max: MAX_ZOOM },// paper's 2 lines title
         showGroupingLinkLinesAtZoomLevel: { min: 0, max: MAX_ZOOM },//edges visibility
       },
     }

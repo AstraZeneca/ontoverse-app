@@ -38,20 +38,11 @@ export const brakeStringIntoLines = (str,  output=[], maxLineLength=40, maxLines
  * @param {number} articleYear 
  * @returns 
  */
-export const truncateArticleAuthors = (authors:string[] | string, articleYear?:string) => {
+export const truncateItemAuthors = (authors:string[] | string, articleYear?:string) => {
   let truncated = Array.isArray(authors) ? authors[0] : authors;
   if (!truncated) {
     return '';
   }
-
-  // const namesCount = authors.length;
-
-  // if( namesCount === 2 ) {
-  //   truncated += ' and ' + authors[1];
-  // } else if( namesCount > 2 ){
-  //   truncated += ' et al.';
-  // }
-
   return truncated + (!articleYear ? '' : ', ' + articleYear);
 }
 // //=========
@@ -96,12 +87,12 @@ const COLUMNS_SCHEMA = [
   },
 ];
   
-export const exportPapersToCSV = (papers, filename) => {
+export const exportItemsToCSV = (items, filename) => {
   const csvRows:string[] = [COLUMNS_SCHEMA.map((colSchema) =>  colSchema.header).join(',')];
 
-  for(var i = 0; i < papers.length; i++){
-      const year = papers[i].year;
-      const paperProps = { ...papers[i].props, year};
+  for(var i = 0; i < items.length; i++){
+      const year = items[i].year;
+      const paperProps = { ...items[i].props, year};
       const row:string[] = COLUMNS_SCHEMA.map((colSchema) => colSchema.accessor(paperProps))
 
       csvRows.push(row.join(','));
@@ -165,3 +156,5 @@ export const getGGScholarUrlByDoi = (doi) => {
 //     console.error('Could not copy text to clipboard: ', err);
 //   }
 // }
+/** @deprecated use truncateItemAuthors */
+export const truncateArticleAuthors = truncateItemAuthors;

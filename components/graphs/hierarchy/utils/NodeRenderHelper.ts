@@ -34,10 +34,14 @@ export const renderUpdatedNodeSizeAndStrokeAndVisibility = (nodesCirclesInFront:
 
 
 
+
+const itemIdFromDatum = (d: BranchNodeByD3): number | undefined =>
+  (d.data.props as { itemID?: number }).itemID;
+
 export const renderCloneNodesWithStroke = (targetNodeDatum:BranchNodeByD3, cloneNodes:SVGCircleElementSelection) => {
-  const targetItemId = targetNodeDatum.data.props.itemID;
+  const targetItemId = itemIdFromDatum(targetNodeDatum) as number;
   cloneNodes
     .attr('r',  d => getCloneRadius(d))
-    .attr('stroke', d => (d.data.props.itemID === targetItemId) ? '#000' : getCloneStrokeColor(d))//show stroke only on clones and the target
+    .attr('stroke', d => (itemIdFromDatum(d) === targetItemId) ? '#000' : getCloneStrokeColor(d))//show stroke only on clones and the target
     .attr('stroke-width',   d => getCloneStrokeWidth(d))//CIRCLE stroke on MOUSE ENTER 
 }

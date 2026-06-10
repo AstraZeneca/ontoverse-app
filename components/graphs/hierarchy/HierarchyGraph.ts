@@ -8,7 +8,7 @@ import { markSelectionInNodesDatum } from './utils/NodeUtils';
 import { removeSelectionEdgeLines, renderLinesBetweenTargetAndClones } from './utils/LineRenderHelper';
 import { SVGCircleElementSelection, SVGEdgesGroupSelection, SVGGraphGroupSelection, useSvgElemsStore } from '@/model/store/svgElemsStore';
 import { NodeClickEvent } from '@/components/graphs/GraphGridLayout';
-import { BranchNodeByD3, EdgeFromServer, GraphData, TreeNode } from '@/model/GraphDataModel';
+import { BranchNodeByD3, Edge, EdgeFromServer, GraphData, NodeKind, TreeNode } from '@/model/GraphDataModel';
 import { NodesSelection, SelectionSource } from '@/lib/state/selectionReducer';
 import { useZoomStore } from '@/model/store/zoomStore';
 import { hideLongerTextOnCollision } from './utils/LabelsUtils';
@@ -33,7 +33,7 @@ export class HierarchyGraph {
     this._handleNodeClick = handleNodeClick;
     this._rootSVGGroup = rootSVGGroup;
 
-    this._graphMaxLevel = graphData.topicNodes.reduce((maxLevel, { graphLevel }) => {
+    this._graphMaxLevel = graphData.collectionNodes.reduce((maxLevel, { graphLevel }) => {
       return (maxLevel < graphLevel) ? graphLevel : maxLevel;
     }, 0)
 
@@ -66,7 +66,7 @@ export class HierarchyGraph {
     // const L = label == null ? null : leaves.map(d => label(d.data, d));
     // const T = title == null ? null : descendants.map(d => title(d.data, d));
   //console.log('descendants', descendants);
-    pack().size([3840, 2160])(rootNode);//here x & y positions are injected
+    pack().size([3840, 2160])(rootNode as never);//here x & y positions are injected
     this._rootNode = rootNode;
 
     if (graphData.edges) {
@@ -76,7 +76,7 @@ export class HierarchyGraph {
     renderNodesWithLabels(
       descendants,
       this._graphMaxLevel,
-      graphData?.edges,
+      graphData?.edges as Edge[],
       handleNodeClick,
     );
 
@@ -121,14 +121,14 @@ export class HierarchyGraph {
       ?.style('display', d => getLabelDisplayValue(d.data.graphLevel, this._graphMaxLevel, currentZoomLevel))
       .style('font-size', d => getLabelFontSize(d.data.graphLevel, currentZoomLevel))
       .style('stroke-width', d => getLabelStrokeWidth(d.data.graphLevel, this._graphMaxLevel, currentZoomLevel));
-    svgRefs.nodesSubLabels1?.style('display', d => getSubLabelDisplayValue(!d.data.grouping, currentZoomLevel))
-    svgRefs.nodesSubLabels2?.style('display', d => getSubLabelDisplayValue(!d.data.grouping, currentZoomLevel))
-    svgRefs.nodesSubLabels3?.style('display', d => getSubLabelDisplayValue(!d.data.grouping, currentZoomLevel))
+    svgRefs.nodesSubLabels1?.style('display', d => getSubLabelDisplayValue(d.data.typeNumber !== NodeKind.Collection, currentZoomLevel))
+    svgRefs.nodesSubLabels2?.style('display', d => getSubLabelDisplayValue(d.data.typeNumber !== NodeKind.Collection, currentZoomLevel))
+    svgRefs.nodesSubLabels3?.style('display', d => getSubLabelDisplayValue(d.data.typeNumber !== NodeKind.Collection, currentZoomLevel))
 
 
     // if ( currentZoomLevel > 40 ) {
       svgRefs.nodesLabels?.attr('y', d => {
-      if (getSubLabelDisplayValue(!d.data.grouping, currentZoomLevel) === 'none') {
+      if (getSubLabelDisplayValue(d.data.typeNumber !== NodeKind.Collection, currentZoomLevel) === 'none') {
         return -1.1;
       }
       return (-d.data.titleInLines.length - 1) * 0.5;

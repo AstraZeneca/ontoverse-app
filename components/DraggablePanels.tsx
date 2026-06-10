@@ -1,8 +1,8 @@
 import { useRef, useState } from "react";
 import { Box, Divider } from "@mui/material";
 import FilterPanel from "./filter/FilterPanel";
-import PaperDetailsPanel from "./NodeDetailsPanels/PaperDetailsPanel";
-import { BranchNodeByD3, PaperNodeType } from "@/model/GraphDataModel";
+import ItemDetailsPanel from "./NodeDetailsPanels/ItemDetailsPanel";
+import { AppBranchNode, AppItemNode } from "@/lib/items/app-types";
 import { CloneChipsToggle } from "./cloneChipsToggle/CloneChipsToggle";
 import DragHandleIcon from "@mui/icons-material/DragHandle";
 
@@ -10,11 +10,11 @@ import DragHandleIcon from "@mui/icons-material/DragHandle";
 const MIN_HEIGHT_PERCENT = 25;
 
 interface DraggablePanelsProps {
-  paperDetailsProps?: { d: PaperNodeType };
-  clonesSelection?: BranchNodeByD3[] | undefined;
+  itemDetailsProps?: { d: AppItemNode };
+  clonesSelection?: AppBranchNode[] | undefined;
 }
 
-const DraggablePanels = ({ paperDetailsProps, clonesSelection }: DraggablePanelsProps) => {
+const DraggablePanels = ({ itemDetailsProps, clonesSelection }: DraggablePanelsProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [filterHeightPercent, setFilterHeightPercent] = useState(50);
   const [isDragging, setIsDragging] = useState(false); // Track dragging state
@@ -75,7 +75,7 @@ const DraggablePanels = ({ paperDetailsProps, clonesSelection }: DraggablePanels
         <DragHandleIcon sx={{ color: "#888", paddingTop: "6px", height: "32px" }} />
       </Divider>
       <Box sx={{ height: `${100 - filterHeightPercent}%`, minHeight: "25%", overflow: "auto" }}>
-        {paperDetailsProps && <PaperDetailsPanel {...paperDetailsProps} />}
+        {itemDetailsProps && <ItemDetailsPanel {...itemDetailsProps} />}
         <CloneChipsToggle clonesSelection={clonesSelection ?? []} />
       </Box>
     </Box>

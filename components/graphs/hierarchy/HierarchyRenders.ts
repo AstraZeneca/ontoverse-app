@@ -14,7 +14,7 @@ import { removeAllEdgeLines, removeDirectEdgeLines, renderConnectedLines } from 
 import { getEgdesDataConnectedToNode } from "./utils/LineUtils";
 import { renderCloneNodesWithStroke } from "./utils/NodeRenderHelper";
 import { getCloneNodesFromEdges, } from "./utils/NodeUtils";
-import { BranchNodeByD3, Edge, TreeNode } from "@/model/GraphDataModel";
+import { BranchNodeByD3, Edge, NodeKind, TreeNode } from "@/model/GraphDataModel";
 import { ZoomStore, useZoomStore } from "@/model/store/zoomStore";
 
 export const SHOW_TOPIC_CIRCLES = false;
@@ -78,8 +78,8 @@ export const renderNodesWithLabels = (
     nodesCirclesInFront: state.nodesCirclesWithLabelSVGGroup?.append('circle')
       .attr('r', d => getCloneRadius(d))
       .attr('id', (d) => 'c' + d.data.id)
-      .attr("fill", d => d.data.paperNode ? "#FFF" : "#fff")
-      .attr("fill-opacity", d => d.data.paperNode ? 1 : 0.1)
+      .attr("fill", d => d.data.typeNumber !== 1 ? "#FFF" : "#fff")
+      .attr("fill-opacity", d => d.data.typeNumber !== 1 ? 1 : 0.1)
       .attr('stroke', d => getCloneStrokeColor(d))
       .attr('stroke-width', d => getCloneStrokeWidth(d))//d.selected ? getCloneStrokeWidth(d) : 0)
       // .attr("stroke-width", d => getLabelStrokeWidth(d.data?.graphLevel, graphMaxLevel))
@@ -88,7 +88,7 @@ export const renderNodesWithLabels = (
   }));
 
   /** MOUSE OVER (ENTER) */
-  useSvgElemsStore.getState().nodesCirclesWithLabelSVGGroup?.filter(d => d.data.typeNumber > 1)//exlude the topic nodes
+  useSvgElemsStore.getState().nodesCirclesWithLabelSVGGroup?.filter(d => d.data.typeNumber > 1)// exclude collection nodes
     .on('mouseenter', (e, targetNodeDatum) => {
 
 
@@ -177,8 +177,8 @@ export const renderNodesWithLabels = (
     nodesLabels: state.nodesCirclesWithLabelSVGGroup?.append('text')
       .attr('y', d => (-d.data.titleInLines.length - 1) * 0.5)
       .text((d):string => {
-        // console.log({g:d.data.grouping, l:d.data.label, t:d.data.title, d:d}); 
-        return !d.data.grouping ? d.data.label : d.data.title;
+        // console.log({g:d.data.typeNumber === NodeKind.Collection, l:d.data.label, t:d.data.title, d:d}); 
+        return d.data.typeNumber !== NodeKind.Collection ? d.data.label : d.data.title;
       })
     .style('display', d => getLabelDisplayValue(d.data.graphLevel, graphMaxLevel, 1))
     .style('font-size', d => getLabelFontSize(d.data.graphLevel, 1))
@@ -195,21 +195,21 @@ export const renderNodesWithLabels = (
   /** tspan lines */
   useSvgElemsStore.setState( (state) => ({
     nodesSubLabels1: state.nodesLabels?.append('tspan')
-      .text(d => !d.data.grouping ? d.data.titleInLines[0] : '')//.substring(0, 40)
+      .text(d => d.data.typeNumber !== NodeKind.Collection ? d.data.titleInLines[0] : '')//.substring(0, 40)
       // .text(d => !d.grouping ? d.title : '')//.substring(0, 40)
       .attr('text-anchor', 'middle')
       .attr("x", 0)
       .attr("y", d => (-d.data.titleInLines.length - 0) * 0.5)
       .style('display', 'none'),
     nodesSubLabels2: state.nodesLabels?.append('tspan')
-      .text(d => !d.data.grouping && d.data.titleInLines[1] ? d.data.titleInLines[1] : '')//.substring(0, 40)
+      .text(d => d.data.typeNumber !== NodeKind.Collection && d.data.titleInLines[1] ? d.data.titleInLines[1] : '')//.substring(0, 40)
       // .text(d => !d.grouping ? d.title : '')//.substring(0, 40)
       .attr('text-anchor', 'middle')
       .attr("x", 0)
       .attr("y", d => (-d.data.titleInLines.length + 1) * 0.5)
       .style('display', 'none'),
     nodesSubLabels3: state.nodesLabels?.append('tspan')
-      .text(d => !d.data.grouping && d.data.titleInLines[2] ? d.data.titleInLines[2] : '')//.substring(0, 40)
+      .text(d => d.data.typeNumber !== NodeKind.Collection && d.data.titleInLines[2] ? d.data.titleInLines[2] : '')//.substring(0, 40)
       // .text(d => !d.grouping ? d.title : '')//.substring(0, 40)
       .attr('text-anchor', 'middle')
       .attr("x", 0)

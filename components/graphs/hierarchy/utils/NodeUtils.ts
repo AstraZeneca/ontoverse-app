@@ -9,7 +9,7 @@ export const getCloneNodesFromEdges = (
   allEgdesDataConnectedToNode: Edge[],
   targetNodeDatum: BranchNodeByD3,
 ) : SVGCircleElementSelection => {
-  const cloneEdgesData = allEgdesDataConnectedToNode.filter((edgeD)=> edgeD.type === EdgeKind.MATCHING_PAPER);
+  const cloneEdgesData = allEgdesDataConnectedToNode.filter((edgeD)=> edgeD.type === EdgeKind.MATCHING_ITEM);
   
   if (cloneEdgesData.length === 0){
     return allNodesCirclesInFront.filter(node => targetNodeDatum.data.id ===(node as BranchNodeByD3).data.id);

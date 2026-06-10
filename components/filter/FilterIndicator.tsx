@@ -21,15 +21,15 @@ const Container = styled.div`
 `;
 
 export const FilterIndicator = ({
-  filteredPapersCount,
-  totalPapersCount,
+  filteredItemsCount,
+  totalItemsCount,
 }: {
-  filteredPapersCount: number;
-  totalPapersCount: number;
+  filteredItemsCount: number;
+  totalItemsCount: number;
 }) => {
   return (
     <Container>
-      <NumberIndicator>{`${filteredPapersCount} of ${totalPapersCount}`}</NumberIndicator>
+      <NumberIndicator>{`${filteredItemsCount} of ${totalItemsCount}`}</NumberIndicator>
     </Container>
   );
 };

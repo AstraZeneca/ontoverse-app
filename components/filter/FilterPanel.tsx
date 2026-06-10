@@ -2,10 +2,9 @@ import React, { useRef, useEffect, useState } from "react";
 import { Download, FilterAlt, FilterAltOff } from "@mui/icons-material";
 import { Box, Chip, IconButton } from "@mui/material";
 import { useContext, useMemo } from "react";
-import { BranchNodeByD3 } from "@/model/GraphDataModel";
-import { exportPapersToCSV } from "@/lib/utils/srtingUtils";
+import { exportItemsToCSV } from "@/lib/utils/srtingUtils";
 import { AppData, GraphDataContext } from "@/components/GraphDataContext";
-import PaperItem, { PAPER_ITEM_HEIGHT } from "./PaperItem";
+import ItemListRow, { ITEM_LIST_ROW_HEIGHT } from "./ItemListRow";
 import SearchField from "./SearchField";
 import { Virtuoso, VirtuosoHandle } from "react-virtuoso";
 import SortDropdown, {
@@ -15,8 +14,8 @@ import SortDropdown, {
 } from "./SortDropdown";
 import { FilterIndicator } from "./FilterIndicator";
 import {
-  getFilteredPapers,
-  getSortedPapers,
+  getFilteredItems,
+  getSortedItems,
   scrollToSelection,
 } from "./filterUtils";
 import { useSelection } from "@/lib/state/SelectionProvider";
@@ -31,9 +30,9 @@ import { useSelectStore } from "@/model/store/useSelection";
 // import styled from "@emotion/styled";
 // import { DRAWER_WIDTH } from '../layout/DrawerHeader';
 import { styled } from "@mui/material/styles";
-import { useRichDataStore } from "@/model/store/richDataStore";
+import { useRichDataStore, AppBranchNode, AppItemProps } from "@/lib/items/app-types";
 
-const TopicChip = styled(Chip)({
+const CollectionChip = styled(Chip)({
   background: "#fff",
   margin: "1px",
   "&:hover": {
@@ -43,7 +42,7 @@ const TopicChip = styled(Chip)({
   // Additional styling if needed
 });
 
-const TopicContainer = styled(Box)`
+const CollectionContainer = styled(Box)`
   position: absolute;
   background: #ffffff00;
   backdrop-filter: blur(4px);
@@ -71,45 +70,45 @@ const FilterPanel = () => {
   );
   const multiSelect = useSelectStore((state) => state.multiSelect);
   const { showSelectedOnly, toggleShowSelectedOnly } = useSidePanelStore();
-  const allPapers: BranchNodeByD3[] = useRichDataStore(
-      (state) => state.paperNodes
+  const allItems: AppBranchNode[] = useRichDataStore(
+      (state) => state.itemNodes
   );
-  const topicNodes: BranchNodeByD3[] = useRichDataStore(
-      (state) => state.topicNodes
+  const collectionNodes: AppBranchNode[] = useRichDataStore(
+      (state) => state.collectionNodes
   );
   const allClones = useRichDataStore((state) => state.cloneNodes);
   // const topicNodes:TopicNodeType[] = !data?.topicNodes ? [] as TopicNodeType[] : data?.topicNodes as TopicNodeType[];
   // const allPapers:BranchNodeByD3[] = !richData?.paperNodes ? [] : richData.paperNodes;
   // const allClones:BranchNodeByD3[] = useMemo( () => !richData?.nodes ? [] :  richData.nodes.filter( n => n.data.typeNumber > 1 ), [richData?.nodes]);
 
-  const sortedPapers: BranchNodeByD3[] = useMemo(() => {
-    const papers = showSelectedOnly
-        ? ((allPapers.filter((p) =>
+  const sortedItems: AppBranchNode[] = useMemo(() => {
+    const items = showSelectedOnly
+        ? ((allItems.filter((p) =>
             nodesSelection.clonesSelection.some(
                 (clone) => clone.data.id === p.data.id
             )
-        ) || []) as BranchNodeByD3[])
-        : allPapers;
-    return getSortedPapers(papers, sortOption);
-  }, [allPapers, sortOption, showSelectedOnly, nodesSelection.clonesSelection]);
+        ) || []) as AppBranchNode[])
+        : allItems;
+    return getSortedItems(items, sortOption) as AppBranchNode[];
+  }, [allItems, sortOption, showSelectedOnly, nodesSelection.clonesSelection]);
 
   // console.log( 'FilterPanel >> sortedPapers', sortedPapers )
 
-  const filteredAndSortedPapers: BranchNodeByD3[] = useMemo(() => {
+  const filteredAndSortedItems: AppBranchNode[] = useMemo(() => {
     try {
-      return getFilteredPapers(sortedPapers, searchQuery);
+      return getFilteredItems(sortedItems, searchQuery) as AppBranchNode[];
     } catch (error) {
-      console.error("Error in getFilteredPapers:", error);
+      console.error("Error in getFilteredItems:", error);
       // alert("Error while fitering papers. Possibly due to data inconsistancy. \nCheck the console for the error details.");
       return []; // Return a fallback value to prevent crashes
     }
-  }, [sortedPapers, searchQuery]);
+  }, [sortedItems, searchQuery]);
 
-  const filteredTopicNodes: BranchNodeByD3[] =
+  const filteredCollectionNodes: AppBranchNode[] =
       searchQuery === ""
           ? []
-          : topicNodes.filter((topicNode) => {
-            return topicNode.data.title
+          : collectionNodes.filter((collectionNode) => {
+            return collectionNode.data.title
                 .toLowerCase()
                 .includes(searchQuery.toLowerCase());
           });
@@ -119,31 +118,31 @@ const FilterPanel = () => {
 
     setSortOption(sortOption);
   };
-  // console.log('searchQuery',searchQuery,'filteredAndSortedPapers',filteredAndSortedPapers, {allPapers});
+  // console.log('searchQuery',searchQuery,'filteredAndSortedItems',filteredAndSortedItems, {allPapers});
   // console.log('FilterPanel >>>>>>>>> nodesSelection',nodesSelection);
   // console.log("FilterPanel ------->> filteredTopicNodes", filteredTopicNodes);
 
   const handleExportClick = () => {
     const { itemsSelectionIds } = nodesSelection;
-    let papersToExport: BranchNodeByD3[] = [];
+    let itemsToExport: AppBranchNode[] = [];
     if (itemsSelectionIds.length > 0) {
-      papersToExport = filteredAndSortedPapers.filter((paper: BranchNodeByD3) =>
-          itemsSelectionIds.some((id) => id === paper.data.props.itemID)
+      itemsToExport = filteredAndSortedItems.filter((item: AppBranchNode) =>
+          itemsSelectionIds.some((id) => id === (item.data.props as AppItemProps).itemID)
       );
     }
 
-    exportPapersToCSV(
-        papersToExport.map((p) => p.data),
-        "papers.csv"
+    exportItemsToCSV(
+        itemsToExport.map((p) => p.data),
+        "items.csv"
     );
   };
 
   const handleSubmitSearchQuery = () => {
-    // alert('TODO: upadate the Graph with the selection IDs: '+filteredAndSortedPapers.map((it:BranchNodeByD3) => it.data.id).join(', '));
+    // alert('TODO: upadate the Graph with the selection IDs: '+filteredAndSortedItems.map((it:BranchNodeByD3) => it.data.id).join(', '));
   };
 
-  const handlePaperItemClick = (paperNodeData: BranchNodeByD3) => {
-    const clones = findCloneNodes(paperNodeData, allClones);
+  const handleItemClick = (itemNodeData: AppBranchNode) => {
+    const clones = findCloneNodes(itemNodeData, allClones);
     // console.log('handlePaperItemClick > newNodeSelection', {clones, targetNode:paperNodeData});
     if (!multiSelect) {
       dispatch({
@@ -154,7 +153,7 @@ const FilterPanel = () => {
     dispatch({
       type: SelectionActions.TOGGLE_ITEM_SELECTION,
       payload: {
-        targetNode: paperNodeData,
+        targetNode: itemNodeData,
         clones,
         selectionSource: SelectionSource.FILTER_PANEL,
       },
@@ -175,28 +174,28 @@ const FilterPanel = () => {
       scrollToSelection(
           nodesSelection.lastSelectedNodeData,
           virtuosoListRef.current,
-          filteredAndSortedPapers
+          filteredAndSortedItems
       );
     }
   };
 
   //ScrollToSelection
   useEffect(() => {
-    // console.log('FilterPanel >> useEffect > last selected',nodesSelection.lastSelectedNodeData,'ref', filteredAndSortedPapers, virtuosoListRef.current, 'filteredAndSortedPapers',filteredAndSortedPapers);
+    // console.log('FilterPanel >> useEffect > last selected',nodesSelection.lastSelectedNodeData,'ref', filteredAndSortedItems, virtuosoListRef.current, 'filteredAndSortedItems',filteredAndSortedItems);
     if (virtuosoListRef.current) {
       scrollToSelection(
           nodesSelection.lastSelectedNodeData,
           virtuosoListRef.current,
-          filteredAndSortedPapers
+          filteredAndSortedItems
       );
     }
-  }, [nodesSelection.lastSelectedNodeData?.data?.id, filteredAndSortedPapers]);
+  }, [nodesSelection.lastSelectedNodeData?.data?.id, filteredAndSortedItems]);
 
   useEffect(() => {
     scrollToSelection(
         nodesSelection.lastSelectedNodeData,
         virtuosoListRef.current,
-        filteredAndSortedPapers
+        filteredAndSortedItems
     );
   }, []);
 
@@ -267,8 +266,8 @@ const FilterPanel = () => {
           </SearchField>
         </Box>
          <FilterIndicator
-            filteredPapersCount={filteredAndSortedPapers.length}
-            totalPapersCount={allPapers.length}
+            filteredItemsCount={filteredAndSortedItems.length}
+            totalItemsCount={allItems.length}
         />
         <Box
             sx={{
@@ -280,21 +279,21 @@ const FilterPanel = () => {
           <Virtuoso
               ref={virtuosoListRef}
               style={{ height: "100%"}} // Ensure Virtuoso uses full height
-              data={filteredAndSortedPapers}
+              data={filteredAndSortedItems}
               itemContent={(index, it) => 
               {
-                const itemNodeId = it.data.props.itemID;
+                const itemNodeId = (it.data.props as AppItemProps).itemID;
                 const selected = nodesSelection.itemsSelectionIds.some(
                     (id) => id === itemNodeId
                 );
                 if (showSelectedOnly && !selected) return null;
               return (
-                  <PaperItem
+                  <ItemListRow
                     key={itemNodeId}
-                      paperNode={it}
+                      itemNode={it}
                       selected={selected}
                       lastSelected={
-                          nodesSelection.lastSelectedNodeData?.data.props.itemID ===
+                          (nodesSelection.lastSelectedNodeData?.data.props as AppItemProps | undefined)?.itemID ===
                           itemNodeId
                       }
                       // key={paper.data.props.itemID.low}
@@ -302,24 +301,23 @@ const FilterPanel = () => {
                       // selected={nodesSelection.itemsSelectionIds.includes(
                       //     paper.data.props.itemID.low
                       // )}
-                      onPaperItemClick={handlePaperItemClick}
+                      onItemClick={handleItemClick}
                   />
               )}}
           />
         </Box>
-        {filteredTopicNodes?.length > 0 && (
-            <TopicContainer>
-              {filteredTopicNodes.map((topicNode) => (
-                  <TopicChip
-                      // color="info"
-                      key={topicNode.data.id}
-                      label={topicNode.data.title}
+        {filteredCollectionNodes?.length > 0 && (
+            <CollectionContainer>
+              {filteredCollectionNodes.map((collectionNode) => (
+                  <CollectionChip
+                      key={collectionNode.data.id}
+                      label={collectionNode.data.title}
                       onClick={() =>
-                          useSelectStore.setState({ selectedTopic: topicNode })
+                          useSelectStore.setState({ selectedTopic: collectionNode })
                       }
                   />
               ))}
-            </TopicContainer>
+            </CollectionContainer>
         )}
       </Box>
   );

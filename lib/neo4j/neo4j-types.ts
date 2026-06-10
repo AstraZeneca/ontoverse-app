@@ -1,12 +1,52 @@
 // Neo4j-specific types - raw database driver structures
-import { PaperFieldProps, CollectionFieldProps } from '@/lib/papers/model/domain-types';
 
 export type LowHigh = { low: number; high: number };
+
+export type RawCollectionDbProps = {
+  collectionID: string | number;
+  collectionName: string;
+  graphLevel?: LowHigh;
+  authors?: string | string[];
+  year?: LowHigh;
+};
+
+export type RawItemDbProps = {
+  abstract?: string;
+  authors?: string | string[];
+  all_authors?: string[];
+  collectionTags?: string[];
+  cui_list?: string[];
+  date?: string;
+  doi?: string;
+  isbn?: string;
+  issue?: string;
+  itemID?: LowHigh;
+  journal?: string;
+  journal_abbreviation?: string;
+  keywords?: string[];
+  meshTerms?: string[];
+  mesh_terms?: string[];
+  pages?: string;
+  pmid?: string;
+  publication_title?: string;
+  similarPapers?: string[];
+  similarItems?: string[];
+  title?: string;
+  skos__prefLabel?: string;
+  url?: string;
+  volume?: string;
+  pubmedID?: LowHigh;
+  year?: LowHigh;
+  nodeID?: string;
+  graphLevel?: LowHigh;
+  edgeWeight?: LowHigh;
+  [key: string]: unknown;
+};
 
 export interface RawNode {
   identity: LowHigh;
   labels: string[];
-  properties: any;
+  properties: RawCollectionDbProps | RawItemDbProps;
 }
 
 export interface RawRelationship {
@@ -15,15 +55,15 @@ export interface RawRelationship {
   end: LowHigh;
   type: string;
   properties: {
-    edgeWeight: LowHigh;
-  }
+    edgeWeight?: LowHigh;
+  };
 }
 
 export type Field = {
   identity: LowHigh;
   labels: string[];
-  properties: CollectionFieldProps | PaperFieldProps;
-}
+  properties: RawCollectionDbProps | RawItemDbProps;
+};
 
 export type DBRecord = {
   keys: string[];
@@ -31,7 +71,6 @@ export type DBRecord = {
   _fieldLookup: {
     collections: number;
     p: number;
-  }
-  _fields: Field[]
-}
-
+  };
+  _fields: Field[];
+};

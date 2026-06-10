@@ -40,12 +40,15 @@ export const selectionReducer = (
   state: NodesSelection,
   action: SelectionActionType
 ): NodesSelection => {
+const itemIdFromNode = (node: BranchNodeByD3 | undefined): number | undefined =>
+  node ? (node.data.props as { itemID?: number }).itemID : undefined;
+
   const multiSelect = action.payload?.multiSelect || false;
   const targetNode = action.payload?.targetNode as BranchNodeByD3;
   const clones = action.payload?.clones as BranchNodeByD3[];
   const selectionSource = action.payload?.selectionSource as SelectionSource;
   const lastSelectedItemId: number =
-    targetNode && targetNode.data.props.itemID;
+    itemIdFromNode(targetNode) as number;
   const lastSelectedNodeClones = targetNode ? [...clones] : [];
   // console.log(">>> selectionReducer > action", action);
   // console.log(">>> selectionReducer striped data: >", {
@@ -77,7 +80,7 @@ export const selectionReducer = (
             (nodeId) => nodeId !== lastSelectedItemId
           ),
           clonesSelection: state.clonesSelection.filter(
-            (clone) => clone.data.props.itemID !== lastSelectedItemId
+            (clone) => itemIdFromNode(clone) !== lastSelectedItemId
           ),
           selectionSource,
         };
@@ -105,7 +108,7 @@ export const selectionReducer = (
       // const { targetNode, clones, selectionSource } = action.payload;
       const targetCloneId: number = targetNode.data.id;
       const targetCloneItemId: number =
-        action.payload.targetNode.data.props.itemID;
+        itemIdFromNode(action.payload.targetNode) as number;
       const isCloneAlreadySelected = state.clonesSelection.some(
         (alredySelectedClone) => alredySelectedClone.data.id === targetCloneId
       );
@@ -116,7 +119,7 @@ export const selectionReducer = (
           (clone) => clone.data.id !== targetCloneId
         );
         const newLastSelectedClone = newClonesSelection.find(
-          (clone) => clone.data.props.itemID === targetCloneItemId
+          (clone) => itemIdFromNode(clone) === targetCloneItemId
         );
         const newItemsSelectionIds = !newLastSelectedClone //if no more clones of that item then the item has to be removed from the selection list
           ? state.itemsSelectionIds.filter((id) => id !== targetCloneItemId)

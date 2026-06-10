@@ -15,7 +15,7 @@ import {
 } from "@/lib/state/selectionReducer";
 import { BranchNodeByD3 } from "@/model/GraphDataModel";
 import { findCloneNodes } from "@/lib/state/selectionUtils";
-import { useRichDataStore } from "@/model/store/richDataStore";
+import { useRichDataStore } from "@/lib/items/app-types";
 import { useSidePanelStore } from "@/model/store/sidePanelStore";
 import { useSelectStore } from "@/model/store/useSelection";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
