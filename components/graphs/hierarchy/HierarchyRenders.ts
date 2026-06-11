@@ -1,6 +1,7 @@
 import { SVGCircleElementSelection, SVGEdgesGroupSelection, useSvgElemsStore } from "@/model/store/svgElemsStore";
 import { GRAPH_CONFIG } from "@/components/graphs/GraphConfig";
 import {
+  applyNodeLabelDy,
   getCloneRadius,
   getCloneStrokeColor,
   getCloneStrokeWidth,
@@ -199,21 +200,21 @@ export const renderNodesWithLabels = (
       // .text(d => !d.grouping ? d.title : '')//.substring(0, 40)
       .attr('text-anchor', 'middle')
       .attr("x", 0)
-      .attr("y", d => (-d.data.titleInLines.length - 0) * 0.5)
+      .attr("y", d => applyNodeLabelDy((-d.data.titleInLines.length - 0) * 0.5))
       .style('display', 'none'),
     nodesSubLabels2: state.nodesLabels?.append('tspan')
       .text(d => d.data.typeNumber !== NodeKind.Collection && d.data.titleInLines[1] ? d.data.titleInLines[1] : '')//.substring(0, 40)
       // .text(d => !d.grouping ? d.title : '')//.substring(0, 40)
       .attr('text-anchor', 'middle')
       .attr("x", 0)
-      .attr("y", d => (-d.data.titleInLines.length + 1) * 0.5)
+      .attr("y", d => applyNodeLabelDy((-d.data.titleInLines.length + 1) * 0.5))
       .style('display', 'none'),
     nodesSubLabels3: state.nodesLabels?.append('tspan')
       .text(d => d.data.typeNumber !== NodeKind.Collection && d.data.titleInLines[2] ? d.data.titleInLines[2] : '')//.substring(0, 40)
       // .text(d => !d.grouping ? d.title : '')//.substring(0, 40)
       .attr('text-anchor', 'middle')
       .attr("x", 0)
-      .attr("y", d => (-d.data.titleInLines.length + 2) * 0.5)
+      .attr("y", d => applyNodeLabelDy((-d.data.titleInLines.length + 2) * 0.5))
       .style('display', 'none'),
   }));
 

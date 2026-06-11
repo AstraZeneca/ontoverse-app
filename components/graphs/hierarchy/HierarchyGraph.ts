@@ -1,7 +1,7 @@
 import { HierarchyNode, Selection, descending, hierarchy, pack, select as d3Select } from 'd3';
 import { GRAPH_CONFIG } from '@/components/graphs/GraphConfig';
 import { renderNodesWithLabels } from './HierarchyRenders';
-import { getLabelDisplayValue, getLabelFontSize, getLabelStrokeWidth, getSubLabelDisplayValue } from './utils/HierarchyUtils';
+import { getLabelDisplayValue, getLabelFontSize, getLabelStrokeWidth, getSubLabelDisplayValue, logZoomLevel } from './utils/HierarchyUtils';
 import { renderUpdatedNodeSizeAndStrokeAndVisibility } from './utils/NodeRenderHelper';
 import { replaceEdgeIdWithSolidData } from '@/model/replaceIdWithSolidData';
 import { markSelectionInNodesDatum } from './utils/NodeUtils';
@@ -99,6 +99,7 @@ export class HierarchyGraph {
    * Public methods
    */
   updateOnZoomChange(currentZoomLevel:number) {
+    logZoomLevel(currentZoomLevel, 'graph');
     const svgRefs = useSvgElemsStore.getState();
     const smallNodesShown = useZoomStore.getState().smallNodesShown;
   //console.log('HierarchyGraph >> updateOnZoomChange > currentZoomLevel', currentZoomLevel, 'svgRefs',svgRefs);

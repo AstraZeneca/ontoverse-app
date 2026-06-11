@@ -8,6 +8,7 @@ import {
   BranchNodeByD3,
   CollectionNodeType,
 } from "@/model/GraphDataModel";
+import { logZoomLevel } from "./HierarchyUtils";
 
 export interface BBox {
   x0: number;
@@ -161,8 +162,7 @@ const zoomTheMapImmediately = (zoomLevel: number) => {
     .ease(easeLinear)
     .call(d3ZoomBehavior.scaleTo, zoomLevel);
 
-  //console.log('zoomTheMapImmediately >> zoomLevel', zoomLevel);
-
+  logZoomLevel(zoomLevel, 'slider');
   useZoomStore.setState({ zoomLevel });
 };
 

@@ -1,22 +1,24 @@
-// Runtime config can be injected via window._env_ (from env-config.js) or process.env
-// CONFIG_ID is used for both client and server side
+// Runtime config: window._env_ (Docker / env-config.js) or process.env (Next.js)
 
-// Function to get runtime config
-const getConfigId = (): string => {
-  // Client-side: check window._env_ first (injected at runtime by Docker)
-  if (typeof window !== 'undefined' && (window as any)._env_) {
-    const env = (window as any)._env_;
-    if (env.CONFIG_ID) return env.CONFIG_ID;
-  }
-  
-  // Server-side or fallback: check process.env
+type RuntimeEnv = { CONFIG_ID?: string };
+
+function readWindowEnv(): RuntimeEnv | undefined {
+  if (typeof globalThis.window === 'undefined') return undefined;
+  return (globalThis.window as Window & { _env_?: RuntimeEnv })._env_;
+}
+
+export function getConfigId(): string {
+  const windowConfigId = readWindowEnv()?.CONFIG_ID;
+  if (windowConfigId) return windowConfigId;
+
+  // Inlined into the client bundle by Next.js when set in .env.local
+  if (process.env.NEXT_PUBLIC_CONFIG_ID) return process.env.NEXT_PUBLIC_CONFIG_ID;
+
+  // Server-side only (not available in the browser bundle)
   if (process.env.CONFIG_ID) return process.env.CONFIG_ID;
-  
+
   return 'MEDIUM';
-};
+}
 
-// Export CONFIG_ID (evaluated at module load, but will use runtime values when available)
+/** @deprecated Prefer getConfigId() — resolved once at import time. */
 export const CONFIG_ID = getConfigId();
-
-console.log('CONFIG_ID:', CONFIG_ID);
-

@@ -84,6 +84,17 @@ export function getSubLabelDisplayValue(isItemNode:boolean, zoomLevel:number) {
   return (zoomLevel >= GRAPH_CONFIG.showItemNodeSubLabelAtZoomLevel.min && zoomLevel <= GRAPH_CONFIG.showItemNodeSubLabelAtZoomLevel.max) ? 'unset' : 'none';
 };
 
+/** Applies optional nodeLabelDY offset to sub-label y positions when configured. */
+export function applyNodeLabelDy(y: number): number {
+  const dy = GRAPH_CONFIG.nodeLabelDY;
+  if (dy === undefined || dy === null) return y;
+  return y + dy;
+}
+
+export function logZoomLevel(zoomLevel: number, source: string): void {
+  console.log(`[Ontoverse] zoom level: ${zoomLevel.toFixed(4)} (${source})`);
+}
+
 export function getLinkOpacity(edge:Edge) {
   switch(edge.type){
     case EdgeKind.MATCHING_ITEM:
