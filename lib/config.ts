@@ -64,7 +64,7 @@ const configs: Record<ConfigId, Config> = {
         showItemNodeLabelAtZoomLevel: { min: 0.35, max: MAX_ZOOM },
         showItemNodeSubLabelAtZoomLevel: { min: 0.5, max: MAX_ZOOM },
         showGroupingLinkLinesAtZoomLevel: { min: 0, max: MAX_ZOOM },
-        nodeLabelDY: 12,
+        nodeLabelDY: 16,
       },
     },
   },
